@@ -3,10 +3,12 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-from src.models.user import User
-from src.config import DB_USER, DB_HOST, DB_PORT, DB_NAME, DB_PASS
-from src.database import Base
-
+from config import DB_USER, DB_HOST, DB_PORT, DB_NAME, DB_PASS
+from database import Base
+from models.user import User
+from models.image import Image
+from models.tweet import Tweet
+from models.like import Like
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

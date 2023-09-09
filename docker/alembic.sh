@@ -1,3 +1,3 @@
 #!/bin/bash
 
-alembic -c src/alembic.ini
+alembic upgrade head
