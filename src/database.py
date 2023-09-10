@@ -17,9 +17,12 @@ class Base(DeclarativeBase):
 # metadata = MetaData()
 
 # Движок для асинхронного соединения с БД
-engine = create_async_engine(DATABASE_URL)
+# FIXME Убрать echo=True
+engine = create_async_engine(DATABASE_URL, echo=True)
+
 # Сессия для запросов к БД
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
+# FIXME Убрать class_=AsyncSession
+async_session_maker = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 # Получение асинхронной сессии
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:

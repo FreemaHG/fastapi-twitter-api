@@ -3,7 +3,7 @@ version: "3.10"
 services:
   db:
     image: postgres:15
-    container_name: db
+    container_name: db-postgres
     command: -p 5432
     expose:
       - 5432

@@ -5,10 +5,10 @@ from alembic import context
 
 from config import DB_USER, DB_HOST, DB_PORT, DB_NAME, DB_PASS
 from database import Base
-from models.user import User
-from models.image import Image
-from models.tweet import Tweet
-from models.like import Like
+from models.users import User
+from models.images import Image
+from models.tweets import Tweet
+from models.likes import Like
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

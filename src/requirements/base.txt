@@ -1,5 +1,5 @@
 fastapi==0.103.1
 SQLAlchemy==2.0.20
-asyncpg==0.28.0
 alembic==1.12.0
+asyncpg==0.28.0
 greenlet==2.0.2
