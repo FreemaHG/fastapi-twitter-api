@@ -16,7 +16,7 @@ class ErrorResponseSchema(ResponseSchema):
     Используется для вывода примера ответа в документации
     """
     result: bool = False
-    error_type: str = HTTPStatus.NOT_FOUND
+    error_type: str = HTTPStatus.NOT_FOUND  # 404 - не найден
     error_message: str = "Not found"
 
 class UnauthorizedResponseSchema(ErrorResponseSchema):
@@ -26,3 +26,11 @@ class UnauthorizedResponseSchema(ErrorResponseSchema):
     """
     error_type: str = HTTPStatus.UNAUTHORIZED  # 401 - не авторизован
     error_message: str = "User authorization error"
+
+class ValidationResponseSchema(ErrorResponseSchema):
+    """
+    Схема для неуспешного ответа при ошибке валидации входных данных.
+    Используется для вывода примера ответа в документации
+    """
+    error_type: str = HTTPStatus.UNPROCESSABLE_ENTITY  # 422 - не обрабатываемый запрос
+    error_message: str = "Invalid input data"

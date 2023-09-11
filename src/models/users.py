@@ -12,6 +12,8 @@ from models.likes import Like
 user_to_user = Table(
     "user_to_user",
     Base.metadata,
+    # FIXME Изменить поле на свое
+    # Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
     Column("followers_id", Integer, ForeignKey("users.id"), primary_key=True),
     Column("following_id", Integer, ForeignKey("users.id"), primary_key=True),
 )
