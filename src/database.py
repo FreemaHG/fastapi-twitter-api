@@ -17,11 +17,12 @@ class Base(DeclarativeBase):
 # metadata = MetaData()
 
 # Движок для асинхронного соединения с БД
-# FIXME Убрать echo=True
+# echo=True - для вывода SQL-запросов в консоли
 engine = create_async_engine(DATABASE_URL, echo=True)
 
 # Сессия для запросов к БД
 # FIXME Убрать class_=AsyncSession
+# expire_on_commit=False - не делать SQL-запросов к закомиченным объектам
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 # Получение асинхронной сессии

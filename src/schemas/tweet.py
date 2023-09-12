@@ -20,7 +20,7 @@ class TweetOut(BaseSchema):
     class Config:
         orm_mode = True
         # Разрешаем псевдонимам изменять названия полей (для ввода и отдачи данных)
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 class Like(BaseModel):
     id: int = Field(alias="user_id")
@@ -29,7 +29,7 @@ class Like(BaseModel):
     class Config:
         orm_mode = True
         # Разрешаем псевдонимам изменять названия полей (для ввода и отдачи данных)
-        allow_population_by_field_name = True
+        populate_by_name = True
 
     @root_validator(pre=True)
     def extract_username(cls, v):
@@ -54,7 +54,7 @@ class TweetOutAll(BaseModel):
     class Config:
         orm_mode = True
         # Разрешаем псевдонимам изменять названия полей (для ввода и отдачи данных)
-        allow_population_by_field_name = True
+        populate_by_name = True
         getter_dict = TweetGetter
 
 class TweetsOut(BaseSchema):

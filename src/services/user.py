@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from loguru import logger
 
+from database import async_session_maker
 from models.users import User
 
 class UserService:
@@ -11,7 +12,7 @@ class UserService:
     """
 
     @classmethod
-    async def get_user_for_key(cls, session: AsyncSession, token: str) -> User | None:
+    async def get_user_for_key(cls, token: str, session: AsyncSession) -> User | None:
         """
         Возврат объекта пользователя по api-key
         :param token: api-ключ пользователя
@@ -20,6 +21,7 @@ class UserService:
         """
         logger.debug(f"Поиск пользователя по api-key: {token}")
 
+        # async with async_session_maker() as session:
         query = select(User)\
             .where(User.api_key == token)\
             .options(selectinload(User.following), selectinload(User.followers))
@@ -30,7 +32,7 @@ class UserService:
         return result.scalar_one_or_none()
 
     @classmethod
-    async def get_user_for_id(cls, session: AsyncSession, user_id: int) -> User | None:
+    async def get_user_for_id(cls, user_id: int, session: AsyncSession) -> User | None:
         """
         Возврат объекта пользователя по id
         :param user_id: id пользователя
@@ -39,6 +41,7 @@ class UserService:
         """
         logger.debug(f"Поиск пользователя по id: {user_id}")
 
+        # async with async_session_maker() as session:
         query = select(User)\
             .where(User.id == user_id)\
             .options(selectinload(User.following), selectinload(User.followers))
@@ -47,3 +50,14 @@ class UserService:
         result = await session.execute(query)
 
         return result.scalar_one_or_none()
+
+    @classmethod
+    async def check_user_for_id(cls, current_user_id: int, user_id: int) -> bool:
+        """
+        Проверка, является ли переданный id текущего пользователя.
+        Используется при оформлении подписки пользователя, чтобы пользователь не подписался сам на себя.
+        :param current_user: объект пользователя
+        :param user_id: id пользователя для проверки
+        :return: True - если переданный id == current_user.id | False - иначе
+        """
+        return current_user_id == user_id

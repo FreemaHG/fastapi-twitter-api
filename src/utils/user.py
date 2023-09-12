@@ -1,17 +1,16 @@
 from typing import Union, Optional, Dict, Any
-from fastapi import Security, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Security
 from http import HTTPStatus
 from loguru import logger
 
+from database import async_session_maker
+from models.users import User
 from services.user import UserService
-from database import get_async_session
 from utils.exeptions import CustomApiException
 from utils.token import TOKEN
 
 
-# FIXME Попробовать перенести Depends(get_async_session) в services
-async def get_current_user(token: str = Security(TOKEN), session: AsyncSession = Depends(get_async_session)):
+async def get_current_user(token: str = Security(TOKEN)) -> User | None:
     """
     Поиск и возврат пользователя из базы данных по токену из header
     """
@@ -24,12 +23,13 @@ async def get_current_user(token: str = Security(TOKEN), session: AsyncSession =
             detail="Valid api-token token is missing"
         )
 
-    current_user = await UserService.get_user_for_key(session=session, token=token)
+    async with async_session_maker() as session:
+        current_user = await UserService.get_user_for_key(token=token, session=session)
 
-    if current_user is None:
-        raise CustomApiException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail="Sorry. Wrong api-key token. This user does not exist"
-        )
+        if current_user is None:
+            raise CustomApiException(
+                status_code=HTTPStatus.UNAUTHORIZED,
+                detail="Sorry. Wrong api-key token. This user does not exist"
+            )
 
-    return current_user
+        return current_user

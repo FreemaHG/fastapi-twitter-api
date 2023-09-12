@@ -34,3 +34,11 @@ class ValidationResponseSchema(ErrorResponseSchema):
     """
     error_type: str = HTTPStatus.UNPROCESSABLE_ENTITY  # 422 - не обрабатываемый запрос
     error_message: str = "Invalid input data"
+
+class LockedResponseSchema(ErrorResponseSchema):
+    """
+    Схема для неуспешного ответа при блокировке действия.
+    Используется для вывода примера ответа в документации
+    """
+    error_type: str = HTTPStatus.LOCKED  # 423 - заблокировано
+    error_message: str = "The action is blocked"
