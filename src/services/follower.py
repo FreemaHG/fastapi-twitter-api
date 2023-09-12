@@ -21,17 +21,18 @@ class FollowerService:
         :param following_user_id: id пользователя для подписки
         :return: None
         """
-        # async with async_session_maker() as session:
-
         logger.debug(f"Запрос подписки пользователя id: {current_user.id} на id: {following_user_id} ")
+
+        # TODO Проверить в контекстном менеджере
+        # async with async_session_maker() as session:
 
         # Проверка, что текущий пользователь не подписывается сам на себя
         if await UserService.check_user_for_id(current_user_id=current_user.id, user_id=following_user_id):
-            logger.error("Попытка подписаться на самого себя")
+            logger.error("Невалидные данные - попытка подписаться на самого себя")
 
             raise CustomApiException(
-                status_code=HTTPStatus.LOCKED,  # 423 - заблокировано
-                detail="You can't subscribe to yourself"
+                status_code=HTTPStatus.UNPROCESSABLE_ENTITY,  # 422
+                detail="Invalid data. You can't subscribe to yourself"
             )
 
         # Поиск пользователя для подписки
@@ -56,6 +57,7 @@ class FollowerService:
         # Получаем текущего пользователя в текущей сессии для записи нового подписчика
         current_user_db = await UserService.get_user_for_id(user_id=current_user.id, session=session)
 
+        # Добавляем подписку текущему пользователю
         current_user_db.following.append(following_user)
         await session.commit()
 
@@ -82,8 +84,45 @@ class FollowerService:
         :param followed_user_id: id пользователя, от которого нужно отписаться
         :return: None
         """
-        # 1 - получить текущего пользователя в текущей сессии
-        # 2 - проверить и получить пользователя для удаления
-        # 3 - проверить, что есть подписка, иначе исключение
-        # 4 - удалить подписку
-        ...
+        logger.debug(f"Запрос удаления подписки пользователя id: {current_user.id} от id: {followed_user_id}")
+
+        # TODO Проверить в контекстном менеджере
+        # async with async_session_maker() as session:
+
+        # Проверка, что текущий пользователь не отписывается от самого себя
+        if await UserService.check_user_for_id(current_user_id=current_user.id, user_id=followed_user_id):
+            logger.error("Невалидные данные - попытка отписаться от самого себя")
+
+            # Проверка, что текущий пользователь не отписывается от самого себя
+            raise CustomApiException(
+                status_code=HTTPStatus.UNPROCESSABLE_ENTITY,  # 422
+                detail="Invalid data. You can't unsubscribe from yourself"
+            )
+
+        # Поиск пользователя для отмены подписки
+        followed_user = await UserService.get_user_for_id(user_id=followed_user_id, session=session)
+
+        if not followed_user:
+            logger.error(f"Не найден пользователь для отмены подписки (id: {followed_user})")
+
+            raise CustomApiException(
+                status_code=HTTPStatus.NOT_FOUND,  # 404
+                detail="The user to cancel the subscription was not found"
+            )
+
+        if not await cls.check_follower(current_user=current_user, following_user_id=followed_user.id):
+            logger.warning(f"Подписка не обнаружена")
+
+            raise CustomApiException(
+                status_code=HTTPStatus.LOCKED,  # 423
+                detail="The user has already been unsubscribed"
+            )
+
+        # Получаем текущего пользователя в текущей сессии для удаления подписки
+        current_user_db = await UserService.get_user_for_id(user_id=current_user.id, session=session)
+
+        # Удаляем подписку текущему пользователю
+        current_user_db.following.remove(followed_user)
+        await session.commit()
+
+        logger.info(f"Подписка удалена")
