@@ -24,6 +24,9 @@ class ImageResponseSchema(ResponseSchema):
         # Разрешаем псевдонимам изменять названия полей (для ввода и отдачи данных)
         populate_by_name = True
 
+        # orm_mode = True
+        # allow_population_by_field_name = True
+
 
 class ImageOutSchema(BaseModel):
     """

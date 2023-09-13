@@ -42,3 +42,11 @@ class LockedResponseSchema(ErrorResponseSchema):
     """
     error_type: str = HTTPStatus.LOCKED  # 423 - заблокировано
     error_message: str = "The action is blocked"
+
+class BadResponseSchema(ResponseSchema):
+    """
+    Схема для ответа при отправке запроса на добавление изображения, но не приложив его.
+    Используется для вывода примера ответа в документации
+    """
+    error_type: str = HTTPStatus.BAD_REQUEST  # 400
+    error_message: str = "The image was not attached to the request"

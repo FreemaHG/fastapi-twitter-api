@@ -93,7 +93,6 @@ class FollowerService:
         if await UserService.check_user_for_id(current_user_id=current_user.id, user_id=followed_user_id):
             logger.error("Невалидные данные - попытка отписаться от самого себя")
 
-            # Проверка, что текущий пользователь не отписывается от самого себя
             raise CustomApiException(
                 status_code=HTTPStatus.UNPROCESSABLE_ENTITY,  # 422
                 detail="Invalid data. You can't unsubscribe from yourself"

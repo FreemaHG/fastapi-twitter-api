@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Извлекаем переменные окружения из файла .env
 
-# Директория для аватаров и изображений к твитам
-_IMAGES_FOLDER = os.path.join("static", "img")
+# Директория для изображений
+IMAGES_FOLDER = os.path.join(".", "static", "images")
 
 # Разрешенные форматы изображений для загрузки
 ALLOWED_EXTENSIONS = {

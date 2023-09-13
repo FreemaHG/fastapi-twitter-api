@@ -1,12 +1,16 @@
+from http import HTTPStatus
 from typing import Annotated
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
 
 from models.users import User
 from schemas.image import ImageResponseSchema
+from services.image import ImageService
+from utils.exeptions import CustomApiException
 from utils.user import get_current_user
 from database import get_async_session
+from schemas.base_response import UnauthorizedResponseSchema, BadResponseSchema, ValidationResponseSchema
 
 
 # Роутер для вывода данных о пользователе
@@ -16,21 +20,32 @@ router = APIRouter(
 )
 
 
-@router.post("/medias", response_model=ImageResponseSchema, status_code=201)
-async def create_upload_file(
-    file: UploadFile | None = None,
+@router.post(
+    "",
+    response_model=ImageResponseSchema,
+    responses={
+        401: {"model": UnauthorizedResponseSchema},
+        400: {"model": BadResponseSchema},
+        422: {"model": ValidationResponseSchema},
+    },
+    status_code=201
+)
+async def add_image(
+    file: UploadFile,
     session: AsyncSession = Depends(get_async_session),
 ):
     """
     Загрузка изображения к твиту
     """
-    logger.debug("Загрузка изображения к твиту")
-
     if not file:
-        return {"message": "No upload file sent"}
-    new_filename = await write_file(file)
-    if new_filename:
-        new_file = Media(path_media=new_filename)
-        session.add(new_file)
-        await session.commit()
-        return new_file
+        logger.error("Изображение не передано в запросе")
+
+        raise CustomApiException(
+            status_code=HTTPStatus.BAD_REQUEST,  # 400
+            detail="The image was not attached to the request"
+        )
+
+    # Записываем изображение в файловой системе и создаем запись в БД
+    image_id = await ImageService.save_image(image=file, session=session)
+
+    return {"media_id": image_id}

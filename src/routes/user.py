@@ -49,7 +49,6 @@ async def get_me(current_user: Annotated[User, Depends(get_current_user)]):
     responses={
         401: {"model": UnauthorizedResponseSchema},
         404: {"model": ErrorResponseSchema},
-        # FIXME Разобраться с проверкой подписки
         422: {"model": ValidationResponseSchema},
         423: {"model": LockedResponseSchema},
     },
