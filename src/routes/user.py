@@ -52,7 +52,7 @@ async def get_me(current_user: Annotated[User, Depends(get_current_user)]):
         422: {"model": ValidationResponseSchema},
         423: {"model": LockedResponseSchema},
     },
-    status_code=200
+    status_code=201
 )
 async def create_follower(
         user_id: int,

@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import update
 from loguru import logger
 
 from models.images import Image
@@ -19,6 +20,7 @@ class ImageService:
         Сохранение изображения (без привязки к твиту)
         :param images: файл
         :param session: объект асинхронной сессии
+        :param session: объект асинхронной сессии
         :return: id изображения
         """
         logger.debug("Сохранение изображения")
@@ -32,20 +34,16 @@ class ImageService:
         return image_obj.id
 
 
-    # FIXME Сделать при загрузке твита
-    # @classmethod
-    # def update_images(cls, tweet_media_ids: List[int], tweet_id: int) -> None:
-    #     """
-    #     Обновление изображений (привязка к твиту)
-    #     :param tweet_media_ids: список с id изображений
-    #     :param tweet_id: id твита для привязки изображений
-    #     :return: None
-    #     """
-    #     logger.debug(
-    #         f"Обновление изображений по id: {tweet_media_ids}, tweet_id: {tweet_id}"
-    #     )
-    #
-    #     db.session.execute(
-    #         update(Image).where(Image.id.in_(tweet_media_ids)).values(tweet_id=tweet_id)
-    #     )
-    #     db.session.commit()
+    @classmethod
+    async def update_images(cls, tweet_media_ids: List[int], tweet_id: int, session: AsyncSession) -> None:
+        """
+        Обновление изображений (привязка к твиту)
+        :param tweet_media_ids: список с id изображений
+        :param tweet_id: id твита для привязки изображений
+        :param session: объект асинхронной сессии
+        :return: None
+        """
+        logger.debug(f"Обновление изображений по id: {tweet_media_ids}, tweet_id: {tweet_id}")
+
+        query = update(Image).where(Image.id.in_(tweet_media_ids)).values(tweet_id=tweet_id)
+        await session.execute(query)

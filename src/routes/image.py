@@ -1,19 +1,15 @@
 from http import HTTPStatus
-from typing import Annotated
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
 
-from models.users import User
 from schemas.image import ImageResponseSchema
 from services.image import ImageService
 from utils.exeptions import CustomApiException
-from utils.user import get_current_user
 from database import get_async_session
 from schemas.base_response import UnauthorizedResponseSchema, BadResponseSchema, ValidationResponseSchema
 
 
-# Роутер для вывода данных о пользователе
 router = APIRouter(
     prefix="/medias",  # URL
     tags=["medias"]  # Объединяем URL в группу
