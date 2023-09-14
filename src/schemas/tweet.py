@@ -62,8 +62,6 @@ from schemas.base_response import ResponseSchema
 
 
 
-
-# TODO Проверить работоспособность своих схем
 class TweetInSchema(BaseModel):
     """
     Схема для входных данных при добавлении нового твита
