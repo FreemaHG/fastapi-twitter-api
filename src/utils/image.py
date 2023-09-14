@@ -1,10 +1,10 @@
 import os
 import aiofiles
 
+from typing import List
 from http import HTTPStatus
 from contextlib import suppress
 from datetime import datetime
-from pathlib import Path
 from fastapi import UploadFile
 from loguru import logger
 
@@ -118,57 +118,47 @@ async def save_image(file: UploadFile, avatar=False) -> str:
         return clear_path(path=full_path)
 
 
-# FIXME Сделать при удалении твита
-# def delete_images(tweet_id: int) -> None:
-#     """
-#     Удаление из файловой системы изображений по id твита
-#     :param tweet_id: id твита
-#     :return: None
-#     """
-#     logger.debug(f"Удаление изображений к твиту №{tweet_id}")
-#
-#     # Находим изображения по id твита
-#     images = db.session.execute(
-#         db.select(Image).filter(Image.tweet_id == tweet_id)
-#     ).all()
-#
-#     if images:
-#         images = list(chain(*images))  # Очищаем результат от вложенных кортежей
-#         # Директория с изображениями к твиту
-#         folder = os.path.join(
-#             "static", images[0].path.rsplit("/", 1)[0].rsplit("\\", 1)[0]
-#         )
-#
-#         for img in images:
-#             try:
-#                 os.remove(
-#                     os.path.join("static", img.path)
-#                 )  # Удаляем каждое изображение из файловой системы
-#
-#             except FileNotFoundError:
-#                 logger.error(f"Директория: {img.path} не найдена")
-#
-#         logger.info("Все изображения удалены")
-#
-#         check_and_delete_folder(
-#             path=folder
-#         )  # Проверка и очистка директории, если пустая
-#
-#     else:
-#         logger.warning("Изображения не найдены")
-#
-#
-# def check_and_delete_folder(path: str) -> None:
-#     """
-#     Проверка и удаление папки, если пуста (подчистка пустых директорий после удаления твитов с изображениями)
-#     :param path: директория с изображениями после удаления твита
-#     :return: None
-#     """
-#     try:
-#         # Удаляем папку, если пустая
-#         if len(os.listdir(path)) == 0:
-#             os.rmdir(path)
-#             logger.info(f"Директория: {path} удалена")
-#
-#     except FileNotFoundError:
-#         logger.error(f"Директория: {path} не найдена")
+async def delete_images(images: List[Image]) -> None:
+    """
+    Удаление из файловой системы изображений
+    :param tweet_id: id твита
+    :return: None
+    """
+    logger.debug(f"Удаление изображений из файловой системы")
+
+    # Директория с изображениями к твиту
+    folder = os.path.join(
+        "static", images[0].path_media.rsplit("/", 1)[0].rsplit("\\", 1)[0]
+    )
+
+    for img in images:
+        try:
+            os.remove(
+                os.path.join("static", img.path_media)
+            )  # Удаляем каждое изображение из файловой системы
+            logger.debug(f"Изображение №{img.id} - {img.path_media} удалено")
+
+        except FileNotFoundError:
+            logger.error(f"Директория: {img.path_media} не найдена")
+
+    logger.info("Все изображения удалены")
+
+    await check_and_delete_folder(
+        path=folder
+    )  # Проверка и очистка директории, если пустая
+
+
+async def check_and_delete_folder(path: str) -> None:
+    """
+    Проверка и удаление папки, если пуста (подчистка пустых директорий после удаления твитов с изображениями)
+    :param path: директория с изображениями после удаления твита
+    :return: None
+    """
+    try:
+        # Удаляем папку, если пустая
+        if len(os.listdir(path)) == 0:
+            os.rmdir(path)
+            logger.info(f"Директория: {path} удалена")
+
+    except FileNotFoundError:
+        logger.error(f"Директория: {path} не найдена")

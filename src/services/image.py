@@ -1,12 +1,13 @@
+from itertools import chain
 from typing import List
 
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import update
+from sqlalchemy import update, select, ScalarResult
 from loguru import logger
 
 from models.images import Image
-from utils.image import save_image
+from utils.image import save_image, delete_images
 
 
 class ImageService:
@@ -47,3 +48,40 @@ class ImageService:
 
         query = update(Image).where(Image.id.in_(tweet_media_ids)).values(tweet_id=tweet_id)
         await session.execute(query)
+
+
+    @classmethod
+    async def get_images(cls, tweet_id: int, session: AsyncSession) -> List[Image]:
+        """
+        Получить изображения твита.
+        Используется при удалении твита для удаления всех его изображений из файловой системы.
+        :param tweet_id: id твита
+        :param session: объект асинхронной сессии
+        :return: None
+        """
+        logger.debug(f"Поиск изображений твита")
+
+        query = select(Image).filter(Image.tweet_id == tweet_id)
+        images = await session.execute(query)
+
+        return list(chain(*images.all()))  # Очищаем результат от вложенных кортежей
+
+
+    @classmethod
+    async def delete_images(cls, tweet_id: int, session: AsyncSession) -> None:
+        """
+        Удаление изображений твита
+        :param tweet_id: id твита
+        :param session: объект асинхронной сессии
+        :return: None
+        """
+        logger.debug("Удаление изображений твита")
+
+        images = await cls.get_images(tweet_id=tweet_id, session=session)
+        logger.info(f"images: {images}")
+
+        if images:
+            await delete_images(images=images)
+
+        else:
+            logger.debug("Изображения не найдены")
