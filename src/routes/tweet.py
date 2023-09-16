@@ -1,16 +1,20 @@
 from typing import Annotated
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
 from models.users import User
 from services.like import LikeService
 from services.tweet import TweetsService
-from schemas.base_response import ResponseSchema, UnauthorizedResponseSchema, ValidationResponseSchema, \
-    LockedResponseSchema, ErrorResponseSchema
-from schemas.tweet import TweetResponseSchema, TweetInSchema
 from utils.user import get_current_user
+from schemas.tweet import TweetResponseSchema, TweetInSchema, TweetListSchema
+from schemas.base_response import (
+    ResponseSchema,
+    UnauthorizedResponseSchema,
+    ValidationResponseSchema,
+    LockedResponseSchema,
+    ErrorResponseSchema
+)
 
 
 router = APIRouter(
@@ -19,11 +23,29 @@ router = APIRouter(
 )
 
 
+@router.get(
+    "",
+    response_model=TweetListSchema,
+    responses={
+        401: {"model": UnauthorizedResponseSchema}
+    },
+    status_code=200
+)
+async def get_tweets(
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: AsyncSession = Depends(get_async_session)
+):
+    """
+    Вывод ленты твитов (выводятся твиты людей, на которых подписан пользователь)
+    """
+    tweets = await TweetsService.get_tweets(user=current_user, session=session)
+
+    return {"tweets": tweets}
+
+
 @router.post(
     "",
-    # Валидация выходных данных согласно схеме UserOutSchema
     response_model=TweetResponseSchema,
-    # Примеры схем ответов для разных кодов ответов сервера
     responses={
         401: {"model": UnauthorizedResponseSchema},
         422: {"model": ValidationResponseSchema},
@@ -31,9 +53,9 @@ router = APIRouter(
     status_code=201
 )
 async def create_tweet(
-        tweet: TweetInSchema,
-        current_user: Annotated[User, Depends(get_current_user)],
-        session: AsyncSession = Depends(get_async_session)
+    tweet: TweetInSchema,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: AsyncSession = Depends(get_async_session)
 ):
     """
     Добавление твита
@@ -69,9 +91,7 @@ async def delete_tweet(
 
 @router.post(
     "/{tweet_id}/likes",
-    # Валидация выходных данных согласно схеме UserOutSchema
     response_model=ResponseSchema,
-    # Примеры схем ответов для разных кодов ответов сервера
     responses={
         401: {"model": UnauthorizedResponseSchema},
         404: {"model": ErrorResponseSchema},
@@ -81,9 +101,9 @@ async def delete_tweet(
     status_code=201
 )
 async def create_like(
-        tweet_id: int,
-        current_user: Annotated[User, Depends(get_current_user)],
-        session: AsyncSession = Depends(get_async_session)
+    tweet_id: int,
+    current_user: Annotated[User, Depends(get_current_user)],
+    session: AsyncSession = Depends(get_async_session)
 ):
     """
     Лайк твита

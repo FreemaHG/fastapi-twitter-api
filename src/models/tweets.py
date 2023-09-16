@@ -1,13 +1,12 @@
 import datetime
-from typing import List
 
+from typing import List
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, String
 
 from database import Base
 from models.images import Image
 from models.likes import Like
-
 
 class Tweet(Base):
     """
@@ -19,8 +18,7 @@ class Tweet(Base):
     tweet_data: Mapped[str] = mapped_column(String(280))
     created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow())
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    # TODO Другое название!!!
     images: Mapped[List["Image"]] = relationship(backref="tweet", cascade="all, delete-orphan")
     likes: Mapped[List["Like"]] = relationship(backref="tweet", cascade="all, delete-orphan")
-    # FIXME Вернуть обратно!
+    # FIXME Подсчет лайков
     # num_kikes: Mapped[int] = mapped_column(default=0)

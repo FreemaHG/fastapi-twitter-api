@@ -8,6 +8,7 @@ def register_routers(app: FastAPI) -> FastAPI:
     """
     Регистрация роутов для API
     """
+
     app.include_router(user_router)  # Вывод информации о пользователе
     app.include_router(media_router)  # Загрузка изображений к твитам
     app.include_router(tweet_router)  # Добавление, удаление и вывод твитов

@@ -3,10 +3,9 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from database import Base
 
-
 class Like(Base):
     """
-    Модель для хранения данных о лайках
+    Модель для хранения данных о лайках к твитам
     """
     __tablename__ = "likes"
 

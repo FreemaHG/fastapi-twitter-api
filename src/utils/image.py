@@ -8,8 +8,8 @@ from datetime import datetime
 from fastapi import UploadFile
 from loguru import logger
 
-from models.images import Image
 from config import ALLOWED_EXTENSIONS, IMAGES_FOLDER
+from models.images import Image
 from utils.exeptions import CustomApiException
 
 
@@ -17,7 +17,7 @@ def allowed_image(image_name: str) -> None:
     """
     Проверка расширения изображения
     :param image_name: название изображения
-    :return: True - формат разрешен / False - формат не разрешен
+    :return: None
     """
     logger.debug("Проверка формата изображения")
 
@@ -25,7 +25,6 @@ def allowed_image(image_name: str) -> None:
     # .rsplit('.', 1) - делит строку, начиная справа; 1 - делит 1 раз (по умолчанию -1 - неограниченное кол-во раз)
     if "." in image_name and image_name.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS:
         logger.info("Формат изображения корректный")
-
     else:
         logger.error("Неразрешенный формат изображения")
 
@@ -35,7 +34,6 @@ def allowed_image(image_name: str) -> None:
                    f"{', '.join(ALLOWED_EXTENSIONS)}"
         )
 
-
 def clear_path(path: str) -> str:
     """
     Очистка входной строки от "static"
@@ -44,7 +42,6 @@ def clear_path(path: str) -> str:
     """
     return path.split("static")[1][1:]
 
-
 # FIXME Сделать сохранение в папку nginx/static
 async def create_directory(path: str) -> None:
     """
@@ -52,7 +49,6 @@ async def create_directory(path: str) -> None:
     """
     logger.debug(f"Создание директории: {path}")
     os.makedirs(path)  # Создание нескольких вложенных папок
-
 
 # FIXME Сделать добавление числового индекса в название файла при дублировании
 # async def update_filename(filename: str) -> str:
@@ -69,7 +65,6 @@ async def create_directory(path: str) -> None:
 #
 #     return new_filename
 
-
 async def save_image(file: UploadFile, avatar=False) -> str:
     """
     Сохранение изображения
@@ -81,7 +76,6 @@ async def save_image(file: UploadFile, avatar=False) -> str:
     allowed_image(image_name=file.filename)
 
     with suppress(OSError):
-
         if avatar:
             logger.debug("Сохранение аватара пользователя")
             path = os.path.join(IMAGES_FOLDER, "avatars")
@@ -98,6 +92,7 @@ async def save_image(file: UploadFile, avatar=False) -> str:
                 f"{current_date.day}",
             )
 
+        # Создаем директорию для картинки, если ее нет
         if not os.path.isdir(path):
             await create_directory(path=path)
 
@@ -117,11 +112,10 @@ async def save_image(file: UploadFile, avatar=False) -> str:
         # Возвращаем очищенную строку для записи в БД
         return clear_path(path=full_path)
 
-
 async def delete_images(images: List[Image]) -> None:
     """
     Удаление из файловой системы изображений
-    :param tweet_id: id твита
+    :param images: объекты изображений из БД
     :return: None
     """
     logger.debug(f"Удаление изображений из файловой системы")
@@ -133,9 +127,8 @@ async def delete_images(images: List[Image]) -> None:
 
     for img in images:
         try:
-            os.remove(
-                os.path.join("static", img.path_media)
-            )  # Удаляем каждое изображение из файловой системы
+            # Удаляем каждое изображение из файловой системы
+            os.remove(os.path.join("static", img.path_media))
             logger.debug(f"Изображение №{img.id} - {img.path_media} удалено")
 
         except FileNotFoundError:
@@ -143,10 +136,8 @@ async def delete_images(images: List[Image]) -> None:
 
     logger.info("Все изображения удалены")
 
-    await check_and_delete_folder(
-        path=folder
-    )  # Проверка и очистка директории, если пустая
-
+    # Проверка и очистка директории, если пустая
+    await check_and_delete_folder(path=folder)
 
 async def check_and_delete_folder(path: str) -> None:
     """

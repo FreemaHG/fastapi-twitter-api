@@ -3,7 +3,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from database import Base
 
-
 class Image(Base):
     """
     Модель для хранения данных об изображениях к твитам
@@ -13,5 +12,3 @@ class Image(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
     tweet_id: Mapped[int] = mapped_column(ForeignKey("tweets.id"), nullable=True)
     path_media: Mapped[str]
-    # FIXME Вернуть свое!
-    # path: Mapped[str] = mapped_column(nullable=True)

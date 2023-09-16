@@ -3,11 +3,15 @@ from fastapi import APIRouter, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
 
-from schemas.image import ImageResponseSchema
+from database import get_async_session
 from services.image import ImageService
 from utils.exeptions import CustomApiException
-from database import get_async_session
-from schemas.base_response import UnauthorizedResponseSchema, BadResponseSchema, ValidationResponseSchema
+from schemas.image import ImageResponseSchema
+from schemas.base_response import (
+    UnauthorizedResponseSchema,
+    BadResponseSchema,
+    ValidationResponseSchema
+)
 
 
 router = APIRouter(

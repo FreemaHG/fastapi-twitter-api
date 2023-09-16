@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from loguru import logger
 
-from database import async_session_maker
 from models.users import User
 
 class UserService:
@@ -14,18 +13,18 @@ class UserService:
     @classmethod
     async def get_user_for_key(cls, token: str, session: AsyncSession) -> User | None:
         """
-        Возврат объекта пользователя по api-key
+        Возврат объекта пользователя по токену
         :param token: api-ключ пользователя
         :param session: объект асинхронной сессии
         :return: объект пользователя / False
         """
         logger.debug(f"Поиск пользователя по api-key: {token}")
 
-        # async with async_session_maker() as session:
         query = select(User)\
             .where(User.api_key == token)\
             .options(selectinload(User.following), selectinload(User.followers))
-            # selectinload - подгружаем подписчиков (без загрузки нет данных - не проходит валидация схемы)
+            # ВАЖНО: selectinload - подгружаем подписчиков
+            # в противном случае по ним нет данных - не проходит валидация схемы!
 
         result = await session.execute(query)
 
@@ -55,8 +54,8 @@ class UserService:
     async def check_user_for_id(cls, current_user_id: int, user_id: int) -> bool:
         """
         Проверка, является ли переданный id текущего пользователя.
-        Используется при оформлении подписки пользователя, чтобы пользователь не подписался сам на себя.
-        :param current_user: объект пользователя
+        Используется при оформлении подписки пользователя, чтобы проверить, что пользователь не подписался сам на себя.
+        :param current_user: объект текущего пользователя
         :param user_id: id пользователя для проверки
         :return: True - если переданный id == current_user.id | False - иначе
         """

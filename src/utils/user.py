@@ -1,4 +1,3 @@
-from typing import Union, Optional, Dict, Any
 from fastapi import Security
 from http import HTTPStatus
 from loguru import logger
@@ -19,16 +18,17 @@ async def get_current_user(token: str = Security(TOKEN)) -> User | None:
         logger.error("Токен не найден в header")
 
         raise CustomApiException(
-            status_code=HTTPStatus.UNAUTHORIZED,
+            status_code=HTTPStatus.UNAUTHORIZED,  # 401
             detail="Valid api-token token is missing"
         )
 
     async with async_session_maker() as session:
+        # Поиск пользователя
         current_user = await UserService.get_user_for_key(token=token, session=session)
 
         if current_user is None:
             raise CustomApiException(
-                status_code=HTTPStatus.UNAUTHORIZED,
+                status_code=HTTPStatus.UNAUTHORIZED,  # 401
                 detail="Sorry. Wrong api-key token. This user does not exist"
             )
 

@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()  # Извлекаем переменные окружения из файла .env
 
 # Директория для изображений

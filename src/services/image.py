@@ -3,12 +3,11 @@ from typing import List
 
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import update, select, ScalarResult
+from sqlalchemy import update, select
 from loguru import logger
 
 from models.images import Image
 from utils.image import save_image, delete_images
-
 
 class ImageService:
     """
@@ -20,7 +19,6 @@ class ImageService:
         """
         Сохранение изображения (без привязки к твиту)
         :param images: файл
-        :param session: объект асинхронной сессии
         :param session: объект асинхронной сессии
         :return: id изображения
         """
@@ -66,7 +64,6 @@ class ImageService:
 
         return list(chain(*images.all()))  # Очищаем результат от вложенных кортежей
 
-
     @classmethod
     async def delete_images(cls, tweet_id: int, session: AsyncSession) -> None:
         """
@@ -78,10 +75,9 @@ class ImageService:
         logger.debug("Удаление изображений твита")
 
         images = await cls.get_images(tweet_id=tweet_id, session=session)
-        logger.info(f"images: {images}")
 
         if images:
+            # Удаляем изображения из файловой системы
             await delete_images(images=images)
-
         else:
-            logger.debug("Изображения не найдены")
+            logger.warning("Изображения не найдены")

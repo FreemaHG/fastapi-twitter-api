@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from schemas.base_response import ResponseSchema
 
@@ -8,10 +8,12 @@ class UserSchema(BaseModel):
     Базовая схема для вывода основных данных о пользователе
     """
     id: int
-    username: str
+    username: str = Field(alias="name")
 
     class Config:
         from_attributes = True
+        # Использовать псевдоним вместо названия поля
+        populate_by_name = True
 
 class UserDataSchema(UserSchema):
     """

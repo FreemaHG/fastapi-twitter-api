@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
 
 from models.users import User
-from database import async_session_maker
 from services.user import UserService
 from utils.exeptions import CustomApiException
 
@@ -19,12 +18,10 @@ class FollowerService:
         Создание подписки на пользователя по id
         :param current_user: объект текущего пользователя
         :param following_user_id: id пользователя для подписки
+        :param session: объект асинхронной сессии
         :return: None
         """
         logger.debug(f"Запрос подписки пользователя id: {current_user.id} на id: {following_user_id} ")
-
-        # TODO Проверить в контекстном менеджере
-        # async with async_session_maker() as session:
 
         # Проверка, что текущий пользователь не подписывается сам на себя
         if await UserService.check_user_for_id(current_user_id=current_user.id, user_id=following_user_id):
@@ -63,7 +60,6 @@ class FollowerService:
 
         logger.info(f"Подписка оформлена")
 
-
     @classmethod
     async def check_follower(cls, current_user: User, following_user_id: int) -> bool:
         """
@@ -75,19 +71,16 @@ class FollowerService:
         # Проверяем, что текущего пользователя нет в числе подписчиков пользователя на которого он хочет подписаться
         return following_user_id in [following.id for following in current_user.following]
 
-
     @classmethod
     async def delete_follower(cls, current_user: User, followed_user_id: int, session: AsyncSession) -> None:
         """
-        Удаление подписки на пользователя по id
+        Удаление подписки на пользователя
         :param current_user: объект текущего пользователя
         :param followed_user_id: id пользователя, от которого нужно отписаться
+        :param session: объект асинхронной сессии
         :return: None
         """
         logger.debug(f"Запрос удаления подписки пользователя id: {current_user.id} от id: {followed_user_id}")
-
-        # TODO Проверить в контекстном менеджере
-        # async with async_session_maker() as session:
 
         # Проверка, что текущий пользователь не отписывается от самого себя
         if await UserService.check_user_for_id(current_user_id=current_user.id, user_id=followed_user_id):

@@ -1,23 +1,22 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from http import HTTPStatus
 from loguru import logger
 
 from models.likes import Like
-from models.users import User
 from services.tweet import TweetsService
 from utils.exeptions import CustomApiException
 
-
 class LikeService:
     """
-    Сервис для проставления лайков и дизлайков твитов
+    Сервис для проставления лайков и дизлайков твитам
     """
 
     @classmethod
     async def like(cls, tweet_id: int, user_id: int, session: AsyncSession) -> None:
         """
         Лайк твита
-        :param tweet_id: id твита
+        :param tweet_id: id твита для лайка
         :param user_id: id пользователя
         :param session: объект асинхронной сессии
         :return: None
@@ -30,29 +29,26 @@ class LikeService:
         if not tweet:
             logger.error("Твит не найден")
 
-            # FIXME Заменить все статусы на HTTP-статусы словами!!!
             raise CustomApiException(
-                status_code=404,
+                status_code=HTTPStatus.NOT_FOUND,  # 404
                 detail="Tweet not found"
             )
 
         if await cls.check_like_tweet(tweet_id=tweet_id, user_id=user_id, session=session):
-            logger.warning("Пользователь уже ставил лайк данному твиту")
+            logger.warning("Пользователь уже ставил лайк твиту")
 
-            # FIXME Заменить все статусы на HTTP-статусы словами!!!
             raise CustomApiException(
-                status_code=423,
+                status_code=HTTPStatus.LOCKED,  # 423
                 detail="The user has already liked this tweet"
             )
 
-        # TODO Возможно сделать в будущем счетчик лайков
+        # FIXME При реализации подсчета лайков
         # tweet.num_likes += 1  # Увеличиваем счетчик с лайками
 
         like_record = Like(user_id=user_id, tweets_id=tweet.id)
 
         session.add(like_record)
         await session.commit()
-
 
     @classmethod
     async def check_like_tweet(cls, tweet_id: int, user_id: int, session: AsyncSession) -> Like | None:
@@ -69,7 +65,6 @@ class LikeService:
         like = await session.execute(query)
 
         return like.scalar_one_or_none()
-
 
     @classmethod
     async def dislike(cls, tweet_id: int, user_id: int, session: AsyncSession) -> None:
@@ -88,9 +83,8 @@ class LikeService:
         if not tweet:
             logger.error("Твит не найден")
 
-            # FIXME Заменить все статусы на HTTP-статусы словами!!!
             raise CustomApiException(
-                status_code=404,
+                status_code=HTTPStatus.NOT_FOUND,  # 404
                 detail="Tweet not found"
             )
 
@@ -101,13 +95,13 @@ class LikeService:
             logger.warning("Запись о лайке не найдена")
 
             raise CustomApiException(
-                status_code=423,
+                status_code=HTTPStatus.LOCKED,  # 423
                 detail="The user has not yet liked the tweet"
             )
 
         await session.delete(like_record)  # Удаляем лайк
 
-        # TODO Возможно сделать подсчет лайков
+        # FIXME Подсчет лайков
         # tweet.num_likes -= 1  # Уменьшаем счетчик лайков твита
         #
         # # Проверка, чтобы лайки не уходили в минус

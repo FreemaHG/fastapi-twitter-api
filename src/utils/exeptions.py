@@ -1,18 +1,18 @@
-from http.client import responses
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 class CustomApiException(HTTPException):
     """
-    Кастомное исключение для вывода ошибок при работе с API
+    Кастомная ошибка для быстрого вызова исключений
     """
     pass
 
 async def custom_api_exception_handler(request: Request, exc: HTTPException):
     """
-    Обработчик ошибок для исключения при работе с API
+    Кастомный обработчик ошибок для CustomApiException
     """
+
     return JSONResponse(
         {
             "result": False,
