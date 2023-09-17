@@ -3,9 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from http import HTTPStatus
 from loguru import logger
 
-from models.likes import Like
-from services.tweet import TweetsService
-from utils.exeptions import CustomApiException
+from src.models.likes import Like
+from src.services.tweet import TweetsService
+from src.utils.exeptions import CustomApiException
 
 class LikeService:
     """

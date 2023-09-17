@@ -8,9 +8,9 @@ from datetime import datetime
 from fastapi import UploadFile
 from loguru import logger
 
-from config import ALLOWED_EXTENSIONS, IMAGES_FOLDER
-from models.images import Image
-from utils.exeptions import CustomApiException
+from src.config import ALLOWED_EXTENSIONS, IMAGES_FOLDER
+from src.models.images import Image
+from src.utils.exeptions import CustomApiException
 
 
 def allowed_image(image_name: str) -> None:

@@ -2,11 +2,11 @@ from fastapi import Security
 from http import HTTPStatus
 from loguru import logger
 
-from database import async_session_maker
-from models.users import User
-from services.user import UserService
-from utils.exeptions import CustomApiException
-from utils.token import TOKEN
+from src.database import async_session_maker
+from src.models.users import User
+from src.services.user import UserService
+from src.utils.exeptions import CustomApiException
+from src.utils.token import TOKEN
 
 
 async def get_current_user(token: str = Security(TOKEN)) -> User | None:

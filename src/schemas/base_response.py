@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from http import HTTPStatus
 
 class ResponseSchema(BaseModel):
@@ -6,9 +6,7 @@ class ResponseSchema(BaseModel):
     Базовая схема для возврата успешного ответа
     """
     result: bool = True
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ErrorResponseSchema(ResponseSchema):
     """

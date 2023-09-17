@@ -1,0 +1,10 @@
+[tool.pytest.ini_options]
+pythonpath = [
+  ".", "src",  # Указываем для Pytest, где находится приложение
+]
+# Асинхронные функции будут распознаваться Pytest и нормально отрабатываться
+asyncio_mode="auto"
+
+# Строгий режим
+# При нем фикстуры пришлось бы определять через - @pytest_asyncio.fixture
+# asyncio_mode="strict"

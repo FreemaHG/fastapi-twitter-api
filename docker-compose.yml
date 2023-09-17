@@ -1,9 +1,10 @@
 version: "3.10"
 
 services:
-  db:
+
+  db-dev:
     image: postgres:15
-    container_name: db-postgres
+    container_name: db-postgres-dev
     command: -p 5432
     expose:
       - 5432
@@ -13,7 +14,35 @@ services:
       - POSTGRES_USER=${DB_USER:?err}
       - POSTGRES_PASSWORD=${DB_PASS:?err}
       - POSTGRES_DB=${DB_NAME:?err}
-#    env_file:
-#      - .env
     volumes:
-      - ./postgres_db/:/var/lib/postgresql/data
+      - ./postgres_db_dev/:/var/lib/postgresql/data
+
+#  db-test:
+#    image: postgres:15
+#    container_name: db-postgres-test
+#    command: -p 2345
+#    expose:
+#      - 2345
+#    ports:
+#      - 2345:2345
+#    environment:
+#      - POSTGRES_USER=${DB_USER:?err}
+#      - POSTGRES_PASSWORD=${DB_PASS:?err}
+#      - POSTGRES_DB=${DB_NAME:?err}
+#    volumes:
+#      - ./postgres_db_test/:/var/lib/postgresql/data
+
+#  db-prod:
+#    image: postgres:15
+#    container_name: db-postgres-prod
+#    command: -p 1234
+#    expose:
+#      - 1234
+#    ports:
+#      - 1234:1234
+#    environment:
+#      - POSTGRES_USER=${DB_USER:?err}
+#      - POSTGRES_PASSWORD=${DB_PASS:?err}
+#      - POSTGRES_DB=${DB_NAME:?err}
+#    volumes:
+#      - ./postgres_db_prod/:/var/lib/postgresql/data

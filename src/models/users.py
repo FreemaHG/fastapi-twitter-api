@@ -2,9 +2,9 @@ from typing import List
 from sqlalchemy import Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database import Base
-from models.tweets import Tweet
-from models.likes import Like
+from src.database import Base
+from src.models.tweets import Tweet
+from src.models.likes import Like
 
 # Подписки пользователей друг на друга
 user_to_user = Table(

@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from pydantic import Field
 
-from schemas.base_response import ResponseSchema
+from src.schemas.base_response import ResponseSchema
 
 class ImageResponseSchema(ResponseSchema):
     """
@@ -9,10 +9,10 @@ class ImageResponseSchema(ResponseSchema):
     """
     id: int = Field(alias="media_id")
 
-    class Config:
-        from_attributes = True
-        # Использовать псевдоним вместо названия поля
-        populate_by_name = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True  # Использовать псевдоним вместо названия поля
+    )
 
 class ImagePathSchema(BaseModel):
     """
@@ -20,5 +20,4 @@ class ImagePathSchema(BaseModel):
     """
     path_media: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

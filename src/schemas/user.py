@@ -1,7 +1,7 @@
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
-from schemas.base_response import ResponseSchema
+from src.schemas.base_response import ResponseSchema
 
 class UserSchema(BaseModel):
     """
@@ -10,10 +10,10 @@ class UserSchema(BaseModel):
     id: int
     username: str = Field(alias="name")
 
-    class Config:
-        from_attributes = True
-        # Использовать псевдоним вместо названия поля
-        populate_by_name = True
+    model_config = ConfigDict(
+        from_attributes=True,  # Автоматическое преобразование данных ORM-модели в объект схемы для сериализации
+        populate_by_name=True  # Использовать псевдоним вместо названия поля
+    )
 
 class UserDataSchema(UserSchema):
     """
@@ -22,9 +22,8 @@ class UserDataSchema(UserSchema):
     following: Optional[List["UserSchema"]] = []
     followers: Optional[List["UserSchema"]] = []
 
-    class Config:
-        # Автоматическое преобразование данных ORM-модели в объект схемы для сериализации
-        from_attributes = True
+    # Автоматическое преобразование данных ORM-модели в объект схемы для сериализации
+    model_config = ConfigDict(from_attributes=True)
 
 class UserOutSchema(ResponseSchema):
     """

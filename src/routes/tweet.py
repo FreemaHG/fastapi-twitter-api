@@ -2,13 +2,13 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import get_async_session
-from models.users import User
-from services.like import LikeService
-from services.tweet import TweetsService
-from utils.user import get_current_user
-from schemas.tweet import TweetResponseSchema, TweetInSchema, TweetListSchema
-from schemas.base_response import (
+from src.database import get_async_session
+from src.models.users import User
+from src.services.like import LikeService
+from src.services.tweet import TweetsService
+from src.utils.user import get_current_user
+from src.schemas.tweet import TweetResponseSchema, TweetInSchema, TweetListSchema
+from src.schemas.base_response import (
     ResponseSchema,
     UnauthorizedResponseSchema,
     ValidationResponseSchema,

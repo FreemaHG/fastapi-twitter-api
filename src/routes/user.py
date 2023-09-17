@@ -3,14 +3,14 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import get_async_session
-from models.users import User
-from services.user import UserService
-from services.follower import FollowerService
-from utils.user import get_current_user
-from utils.exeptions import CustomApiException
-from schemas.user import UserOutSchema
-from schemas.base_response import (
+from src.database import get_async_session
+from src.models.users import User
+from src.services.user import UserService
+from src.services.follower import FollowerService
+from src.utils.user import get_current_user
+from src.utils.exeptions import CustomApiException
+from src.schemas.user import UserOutSchema
+from src.schemas.base_response import (
     UnauthorizedResponseSchema,
     ErrorResponseSchema,
     ValidationResponseSchema,

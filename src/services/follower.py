@@ -3,9 +3,9 @@ from http import HTTPStatus
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
 
-from models.users import User
-from services.user import UserService
-from utils.exeptions import CustomApiException
+from src.models.users import User
+from src.services.user import UserService
+from src.utils.exeptions import CustomApiException
 
 class FollowerService:
     """

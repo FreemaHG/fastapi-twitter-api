@@ -1,9 +1,9 @@
 from typing import AsyncGenerator
-from sqlalchemy import MetaData
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine, AsyncAttrs
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import MetaData
 
-from config import DB_USER, DB_PASS, DB_PORT, DB_NAME, DB_HOST
+from src.config import DB_USER, DB_PASS, DB_PORT, DB_NAME, DB_HOST
 
 
 DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
@@ -14,7 +14,7 @@ class Base(DeclarativeBase):
 
 # Объект метадаты передается в таблицы и в него записываются все изменения моделей для того,
 # чтобы в дальнейшем можно было применять миграции (либо можно использовать метадату из Base.metadata)
-# metadata = MetaData()
+metadata = MetaData()
 
 # Движок для асинхронного соединения с БД
 # echo=True - для вывода SQL-запросов в консоли

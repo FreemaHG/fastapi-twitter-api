@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, ConfigDict
+
 
 class LikeSchema(BaseModel):
     """
@@ -7,9 +8,10 @@ class LikeSchema(BaseModel):
     id: int = Field(alias="user_id")
     username: str = Field(alias="name")
 
-    class Config:
-        from_attributes = True
-        populate_by_name = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True  # Использовать псевдоним вместо названия поля
+    )
 
     @model_validator(mode='before')
     def extract_user(cls, data):

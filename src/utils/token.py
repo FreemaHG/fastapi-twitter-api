@@ -2,7 +2,8 @@ from typing import Optional
 from http import HTTPStatus
 from fastapi.security import APIKeyHeader
 from starlette.requests import Request
-from utils.exeptions import CustomApiException
+
+from src.utils.exeptions import CustomApiException
 
 class APITokenHeader(APIKeyHeader):
     """

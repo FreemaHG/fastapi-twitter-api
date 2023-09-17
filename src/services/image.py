@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update, select
 from loguru import logger
 
-from models.images import Image
-from utils.image import save_image, delete_images
+from src.models.images import Image
+from src.utils.image import save_image, delete_images
 
 class ImageService:
     """

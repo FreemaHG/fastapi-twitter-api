@@ -1,15 +1,10 @@
-from typing import Any, Optional, List
-from loguru import logger
+from typing import Optional, List
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
-from pydantic import BaseModel, Field, root_validator, computed_field, validator, field_validator
-from pydantic.v1.utils import GetterDict
-
-# from pydantic.utils import GetterDict
-
-from schemas.base_response import ResponseSchema
-from schemas.like import LikeSchema
-from schemas.user import UserSchema
-from schemas.image import ImagePathSchema
+from src.schemas.base_response import ResponseSchema
+from src.schemas.like import LikeSchema
+from src.schemas.user import UserSchema
+from src.schemas.image import ImagePathSchema
 
 
 class TweetInSchema(BaseModel):
@@ -31,46 +26,14 @@ class TweetResponseSchema(ResponseSchema):
         # Разрешаем псевдонимам изменять названия полей (для ввода и отдачи данных)
         populate_by_name = True
 
-
-# class TweetOutGetter(GetterDict):
-#     """
-#     Класс используется для вывода ссылок изображений без отображения ключа
-#     """
-#     def get(self, key: str, default: Any = None) -> Any:
-#         # if key == "attachments":
-#         if key == "attachments":
-#             logger.info("Обработка ссылок на изображения")
-#             # Проходим циклом по tweet.images и возвращаем значение path_media
-#             # Таким образом в качестве ответа в схему в поле значения подставятся строки без ключа
-#             # "attachments"[
-#             #     path_media_1,
-#             #     path_media_2,
-#             # ]
-#             obj = self._obj
-#             logger.info(f"Текущий объект твита: {obj}")
-#             logger.info(f"Изображения твита: {obj.images}")
-#
-#             return [
-#                 # *[x.path_media for x in self._obj.images],
-#                 *[x.path_media for x in self._obj.images],
-#             ]
-#
-#         else:
-#             return super(TweetOutGetter, self).get(key, default)
-
-
 class TweetOutSchema(BaseModel):
     """
     Схема для вывода твита, автора, вложенных изображений и данных по лайкам
     """
     id: int
     tweet_data: str = Field(alias="content")
-    # images: List[ImageOutSchema] = Field(alias="attachments")
-    user: UserSchema = Field(alias="author")  # Только поле only=("id", "name")
-    # FIXME Не работают!!!
-    likes: List[LikeSchema]  # Только поле only=("user_id", "user.name")
-    # attachments: List
-    # images: List[ImagePathSchema] = Field(alias="attachments")
+    user: UserSchema = Field(alias="author")
+    likes: List[LikeSchema]
     images: List[str] = Field(alias="attachments")
 
     @field_validator('images', mode="before")
@@ -83,10 +46,11 @@ class TweetOutSchema(BaseModel):
 
         return val
 
-    class Config:
-        from_attributes = True
-        populate_by_name = True
-        # getter_dict = TweetOutGetter
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True  # Использовать псевдоним вместо названия поля
+    )
+
 
 class TweetListSchema(ResponseSchema):
     """

@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-from routes.user import router as user_router
-from routes.image import router as media_router
-from routes.tweet import router as tweet_router
+
+from src.routes.user import router as user_router
+from src.routes.image import router as media_router
+from src.routes.tweet import router as tweet_router
 
 
 def register_routers(app: FastAPI) -> FastAPI:

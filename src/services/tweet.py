@@ -4,12 +4,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from http import HTTPStatus
 from loguru import logger
 
-from models.likes import Like
-from models.tweets import Tweet
-from models.users import User
-from services.image import ImageService
-from utils.exeptions import CustomApiException
-from schemas.tweet import TweetInSchema
+from src.models.likes import Like
+from src.models.tweets import Tweet
+from src.models.users import User
+from src.services.image import ImageService
+from src.utils.exeptions import CustomApiException
+from src.schemas.tweet import TweetInSchema
 
 class TweetsService:
     """

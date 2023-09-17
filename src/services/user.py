@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from loguru import logger
 
-from models.users import User
+from src.models.users import User
 
 class UserService:
     """
