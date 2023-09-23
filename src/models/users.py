@@ -40,3 +40,8 @@ class User(Base):
         backref="followers",
         lazy="selectin",
     )
+
+    # Отключаем проверку строк, тем самым убирая уведомление, возникающее при удалении несуществующей строки
+    __mapper_args__ = {
+        'confirm_deleted_rows': False
+    }

@@ -121,7 +121,7 @@ class TweetsService:
                 )
 
             else:
-                # Удаляем изображения твита
+                # Удаляем изображения твита из файловой системы
                 await ImageService.delete_images(tweet_id=tweet.id, session=session)
 
                 # Удаляем твит

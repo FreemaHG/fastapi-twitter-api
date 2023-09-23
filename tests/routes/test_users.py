@@ -7,7 +7,7 @@ from http import HTTPStatus
 
 class TestUsers:
 
-    @pytest.fixture()
+    @pytest.fixture(scope="class")
     async def response_data(
             self,
             good_response: Dict
@@ -22,9 +22,10 @@ class TestUsers:
             "followers": [],
         }
         good_response["user"] = user_data
+
         return good_response
 
-    @pytest.fixture()
+    @pytest.fixture(scope="class")
     async def response_error(
             self,
             bad_response: Dict
@@ -34,9 +35,10 @@ class TestUsers:
         """
         bad_response["error_type"] = f"{HTTPStatus.NOT_FOUND}"
         bad_response["error_message"] = "User not found"
+
         return bad_response
 
-
+    @pytest.mark.usefixtures("users")
     async def test_user_me_data(
             self,
             client: AsyncClient,
@@ -52,7 +54,7 @@ class TestUsers:
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == response_data
 
-
+    @pytest.mark.usefixtures("users")
     async def test_user_data_for_id(
             self,
             client: AsyncClient,
@@ -68,7 +70,7 @@ class TestUsers:
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == response_data
 
-
+    @pytest.mark.usefixtures("users")
     async def test_user_data_for_id_not_found(
             self,
             client: AsyncClient,

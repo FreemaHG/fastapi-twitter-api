@@ -1,3 +1,4 @@
+import pytest
 from httpx import AsyncClient
 from http import HTTPStatus
 
@@ -18,6 +19,8 @@ class TestToken:
         assert resp.status_code == HTTPStatus.UNAUTHORIZED  # Проверка кода ответа - 401
         assert resp.json() == await_response  # Проверка ответа
 
+    # Используем фикстуру пользователем (создаем пользователя в тестовой БД)
+    @pytest.mark.usefixtures("users")
     async def test_unidentified_user(self, client: AsyncClient) -> None:
         """
         Тестирование вывода ошибки при запросе с api-key в header, но без совпадений в БД

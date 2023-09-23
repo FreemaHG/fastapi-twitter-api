@@ -22,3 +22,8 @@ class Tweet(Base):
     likes: Mapped[List["Like"]] = relationship(backref="tweet", cascade="all, delete-orphan")
     # FIXME Подсчет лайков
     # num_kikes: Mapped[int] = mapped_column(default=0)
+
+    # Отключаем проверку строк, тем самым убирая уведомление, возникающее при удалении несуществующей строки
+    __mapper_args__ = {
+        'confirm_deleted_rows': False
+    }

@@ -1,14 +1,13 @@
 import json
 from http import HTTPStatus
 from typing import Dict
-from loguru import logger
 
 from httpx import AsyncClient
 import pytest
 
 class TestTweets:
 
-    @pytest.fixture()
+    @pytest.fixture(scope="class")
     async def headers_with_content_type(
             self,
             headers: Dict
@@ -19,7 +18,7 @@ class TestTweets:
         headers["Content-Type"] = "application/json"
         return headers
 
-    @pytest.fixture()
+    @pytest.fixture(scope="class")
     async def resp_for_new_tweet(
             self,
             good_response: Dict
@@ -28,17 +27,18 @@ class TestTweets:
         Успешный ответ при добавлении нового твита
         """
         good_resp = good_response.copy()
-        good_resp["tweet_id"] = 3
+        # id = 4, т.к. фикстурами уже создано 3 твита
+        good_resp["tweet_id"] = 4
         return good_resp
 
-    @pytest.fixture()
+    @pytest.fixture(scope="class")
     async def new_tweet(self) -> Dict:
         """
         Данные для добавления нового твита
         """
         return {"tweet_data": "Тестовый твит", "tweet_media_ids": []}
 
-    @pytest.fixture()
+    @pytest.fixture(scope="class")
     async def new_tweet_with_image(
             self,
             new_tweet: Dict
@@ -49,7 +49,7 @@ class TestTweets:
         new_tweet["tweet_media_ids"] = [1, 2]
         return new_tweet
 
-    @pytest.fixture()
+    @pytest.fixture(scope="class")
     async def response_tweet_locked(
             self,
             response_locked: Dict
@@ -74,11 +74,10 @@ class TestTweets:
 
         return resp
 
-    # @pytest.mark.usefixtures("delete_tweets")
+
     async def test_create_tweet(
             self,
             client: AsyncClient,
-            # tweets: Dict,
             new_tweet: Dict,
             headers_with_content_type: Dict,
             resp_for_new_tweet: Dict
@@ -97,13 +96,9 @@ class TestTweets:
         assert resp.json() == resp_for_new_tweet
 
 
-    # FIXME Почему id нового твита = 6, а не 3?
-    # @pytest.mark.skip(reason="id нового твита почему-то 6, вместо 3. Разобраться!")
-    # @pytest.mark.usefixtures("delete_tweets")
     async def test_create_tweet_with_images(
             self,
             client: AsyncClient,
-            # tweets: Dict,
             headers_with_content_type: Dict,
             new_tweet_with_image: Dict,
             resp_for_new_tweet: Dict
@@ -117,8 +112,8 @@ class TestTweets:
             new_tweet_data=new_tweet_with_image
         )
 
-        # TODO Удалить
-        logger.info(f"Ответ после создания твита С картинками: {resp.json()}")
+        # Меняем id для проверки, т.к. текущий твит имеет 4 порядковый номер в БД
+        resp_for_new_tweet["tweet_id"] = 5
 
         assert resp
         assert resp.status_code == HTTPStatus.CREATED
@@ -128,10 +123,8 @@ class TestTweets:
     async def test_create_invalid_tweet(
             self,
             client: AsyncClient,
-            # tweets: Dict,
             headers_with_content_type: Dict,
             new_tweet: Dict,
-            resp_for_new_tweet: Dict,
             bad_response: Dict
     ) -> None:
         """
@@ -161,7 +154,6 @@ class TestTweets:
     async def test_delete_tweet(
             self,
             client: AsyncClient,
-            tweets: Dict,
             headers: Dict,
             good_response: Dict
     ) -> None:
@@ -178,7 +170,6 @@ class TestTweets:
     async def test_delete_tweet_not_found(
             self,
             client: AsyncClient,
-            tweets: Dict,
             headers: Dict,
             response_tweet_not_found: Dict
     ) -> None:
@@ -195,7 +186,6 @@ class TestTweets:
     async def test_delete_tweet_locked(
             self,
             client: AsyncClient,
-            tweets: Dict,
             headers: Dict,
             response_tweet_locked: Dict
     ) -> None:

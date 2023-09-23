@@ -5,7 +5,7 @@ pythonpath = [
 
 # Игнорировать предупреждения DeprecationWarning
 filterwarnings = [
-    "ignore::DeprecationWarning"
+    "ignore::DeprecationWarning",
 ]
 
 # Асинхронные функции будут распознаваться Pytest и нормально отрабатываться

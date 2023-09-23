@@ -42,7 +42,7 @@ class LikeService:
                 detail="The user has already liked this tweet"
             )
 
-        # FIXME При реализации подсчета лайков
+        # TODO При реализации подсчета лайков
         # tweet.num_likes += 1  # Увеличиваем счетчик с лайками
 
         like_record = Like(user_id=user_id, tweets_id=tweet.id)
@@ -91,7 +91,12 @@ class LikeService:
         # Ищем запись о лайке
         like_record = await cls.check_like_tweet(tweet_id=tweet_id, user_id=user_id, session=session)
 
-        if not like_record:
+        logger.info(f"Найденный лайк: {like_record}")
+        # logger.info(f"id: {like_record.id}")
+        # logger.info(f"твит: {like_record.tweets_id}")
+        # logger.info(f"автор: {like_record.user_id}")
+
+        if like_record is None:
             logger.warning("Запись о лайке не найдена")
 
             raise CustomApiException(
@@ -101,7 +106,7 @@ class LikeService:
 
         await session.delete(like_record)  # Удаляем лайк
 
-        # FIXME Подсчет лайков
+        # TODO Подсчет лайков
         # tweet.num_likes -= 1  # Уменьшаем счетчик лайков твита
         #
         # # Проверка, чтобы лайки не уходили в минус

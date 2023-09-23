@@ -1,6 +1,5 @@
 from typing import Tuple, Dict
 
-import loguru
 import pytest
 from http import HTTPStatus
 
@@ -12,36 +11,30 @@ from src.models.tweets import Tweet
 from src.models.tweets import Like
 
 
+# Используем в тестах данные о пользователе и твитах
+@pytest.mark.usefixtures("users", "tweets")
 class TestLikes:
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     async def likes(
             self,
             users: Tuple[User],
             tweets: Tuple[Tweet]
-    ) -> Tuple[Like, Like]:
+    ) -> Like:
         """
         Добавляем записи о лайках
         """
         async with async_session_maker() as session:
             like_1 = Like(user_id=users[0].id, tweets_id=tweets[0].id)
-            like_2 = Like(user_id=users[1].id, tweets_id=tweets[1].id)
-
-            session.add_all([like_1, like_2])
+            session.add(like_1)
             await session.commit()
 
-            yield like_1, like_2
-            # return like_1, like_2
-
-            await session.delete(like_1)
-            await session.delete(like_2)
-            await session.commit()
+            return like_1
 
 
     async def test_create_like(
             self,
             client: AsyncClient,
-            likes: Tuple[Like],
             headers: Dict,
             good_response: Dict,
     ) -> None:
@@ -58,7 +51,6 @@ class TestLikes:
     async def test_create_like_not_found(
             self,
             client: AsyncClient,
-            likes: Tuple[Like],
             headers: Dict,
             response_tweet_not_found: Dict,
     ) -> None:
@@ -71,11 +63,11 @@ class TestLikes:
         assert resp.status_code == HTTPStatus.NOT_FOUND
         assert resp.json() == response_tweet_not_found
 
-
+    # Используем фикстуру для создания лайка (будет использоваться во всех следующих тестах к классе!)
+    @pytest.mark.usefixtures("likes")
     async def test_create_like_locked(
             self,
             client: AsyncClient,
-            likes: Tuple[Like],
             headers: Dict,
             response_locked: Dict
     ) -> None:
@@ -93,7 +85,6 @@ class TestLikes:
     async def test_delete_like(
             self,
             client: AsyncClient,
-            likes: Tuple[Like],
             headers: Dict,
             good_response: Dict
     ) -> None:
@@ -110,7 +101,6 @@ class TestLikes:
     async def test_delete_like_not_found(
             self,
             client: AsyncClient,
-            likes: Tuple[Like],
             headers: Dict,
             response_tweet_not_found: Dict
     ) -> None:
@@ -124,22 +114,17 @@ class TestLikes:
         assert resp.json() == response_tweet_not_found
 
 
-    # FIXME Почему ответ 200 (успешнро удален), вместо 423 - щаблокировано
-    # @pytest.mark.skip(reason="Почему-то разрешает удалить твит, вместо того, чтобы запретить. Разобраться!")
     async def test_delete_like_locked(
             self,
             client: AsyncClient,
-            likes: Tuple[Like],
             headers: Dict,
             response_locked: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при попытке удалить не существующий лайк
         """
-        resp = await client.delete("/tweets/2/likes", headers=headers)
+        resp = await client.delete("/tweets/3/likes", headers=headers)
         response_locked["error_message"] = "The user has not yet liked this tweet"
-
-        loguru.logger.info(f"Ответ: {resp.json()}")
 
         assert resp
         assert resp.status_code == HTTPStatus.LOCKED
