@@ -96,7 +96,7 @@ class LikeService:
 
             raise CustomApiException(
                 status_code=HTTPStatus.LOCKED,  # 423
-                detail="The user has not yet liked the tweet"
+                detail="The user has not yet liked this tweet"
             )
 
         await session.delete(like_record)  # Удаляем лайк

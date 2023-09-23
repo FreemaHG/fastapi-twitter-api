@@ -2,6 +2,12 @@
 pythonpath = [
   ".", "src",  # Указываем для Pytest, где находится приложение
 ]
+
+# Игнорировать предупреждения DeprecationWarning
+filterwarnings = [
+    "ignore::DeprecationWarning"
+]
+
 # Асинхронные функции будут распознаваться Pytest и нормально отрабатываться
 asyncio_mode="auto"
 

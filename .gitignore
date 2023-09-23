@@ -133,4 +133,4 @@ dmypy.json
 /.editorconfig
 
 /postgres_db*/
-/tests/
+.*
