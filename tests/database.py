@@ -16,10 +16,10 @@ from src.config import (
 DATABASE_URL_TEST = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 # Тестовый движок
-# engine_test = create_async_engine(DATABASE_URL_TEST, poolclass=NullPool, echo=True)
 engine_test = create_async_engine(DATABASE_URL_TEST, poolclass=NullPool)
 
 # Асинхронная сессия
+# TODO Проверить без expire_on_commit=False
 async_session_maker = async_sessionmaker(engine_test, class_=AsyncSession, expire_on_commit=False)
 
 # Связываем с объектом методанных тестовый движок, чтобы таблицы создавались именно в тестовой БД

@@ -81,3 +81,4 @@ class ImageService:
             await delete_images(images=images)
         else:
             logger.warning("Изображения не найдены")
+

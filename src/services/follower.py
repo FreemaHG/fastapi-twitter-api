@@ -107,7 +107,7 @@ class FollowerService:
 
             raise CustomApiException(
                 status_code=HTTPStatus.LOCKED,  # 423
-                detail="The user has already been unsubscribed"
+                detail="The user is not among the subscribers"
             )
 
         # Получаем текущего пользователя в текущей сессии для удаления подписки

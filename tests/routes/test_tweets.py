@@ -5,12 +5,15 @@ from typing import Dict
 from httpx import AsyncClient
 import pytest
 
+
+@pytest.mark.tweet
+@pytest.mark.usefixtures("users", "tweets")
 class TestTweets:
 
     @pytest.fixture(scope="class")
     async def headers_with_content_type(
-            self,
-            headers: Dict
+        self,
+        headers: Dict
     ) -> Dict:
         """
         Заголовок при добавлении нового твита
@@ -20,8 +23,8 @@ class TestTweets:
 
     @pytest.fixture(scope="class")
     async def resp_for_new_tweet(
-            self,
-            good_response: Dict
+        self,
+        good_response: Dict
     ) -> Dict:
         """
         Успешный ответ при добавлении нового твита
@@ -40,8 +43,8 @@ class TestTweets:
 
     @pytest.fixture(scope="class")
     async def new_tweet_with_image(
-            self,
-            new_tweet: Dict
+        self,
+        new_tweet: Dict
     ) -> Dict:
         """
         Данные для добавления нового твита с изображениями
@@ -51,17 +54,17 @@ class TestTweets:
 
     @pytest.fixture(scope="class")
     async def response_tweet_locked(
-            self,
-            response_locked: Dict
+        self,
+        response_locked: Dict
     ) -> Dict:
         response_locked["error_message"] = "The tweet that is being accessed is locked"
         return response_locked
 
     async def send_request(
-            self,
-            client: AsyncClient,
-            headers: Dict,
-            new_tweet_data: Dict = new_tweet
+        self,
+        client: AsyncClient,
+        headers: Dict,
+        new_tweet_data: Dict = new_tweet
     ):
         """
         Отправка запроса на добавление нового твита
@@ -76,11 +79,11 @@ class TestTweets:
 
 
     async def test_create_tweet(
-            self,
-            client: AsyncClient,
-            new_tweet: Dict,
-            headers_with_content_type: Dict,
-            resp_for_new_tweet: Dict
+        self,
+        client: AsyncClient,
+        new_tweet: Dict,
+        headers_with_content_type: Dict,
+        resp_for_new_tweet: Dict
     ) -> None:
         """
         Тестирование добавления твита (без изображений)
@@ -97,11 +100,11 @@ class TestTweets:
 
 
     async def test_create_tweet_with_images(
-            self,
-            client: AsyncClient,
-            headers_with_content_type: Dict,
-            new_tweet_with_image: Dict,
-            resp_for_new_tweet: Dict
+        self,
+        client: AsyncClient,
+        headers_with_content_type: Dict,
+        new_tweet_with_image: Dict,
+        resp_for_new_tweet: Dict
     ) -> None:
         """
         Тестирование добавления твита с изображениями
@@ -121,11 +124,11 @@ class TestTweets:
 
 
     async def test_create_invalid_tweet(
-            self,
-            client: AsyncClient,
-            headers_with_content_type: Dict,
-            new_tweet: Dict,
-            bad_response: Dict
+        self,
+        client: AsyncClient,
+        headers_with_content_type: Dict,
+        new_tweet: Dict,
+        bad_response: Dict
     ) -> None:
         """
         Тестирование вывода сообщения об ошибке при публикации слишком длинного твита (> 280 символов)
@@ -152,10 +155,10 @@ class TestTweets:
         assert resp.json() == bad_response
 
     async def test_delete_tweet(
-            self,
-            client: AsyncClient,
-            headers: Dict,
-            good_response: Dict
+        self,
+        client: AsyncClient,
+        headers: Dict,
+        good_response: Dict
     ) -> None:
         """
         Тестирование удаление твита
@@ -168,10 +171,10 @@ class TestTweets:
 
 
     async def test_delete_tweet_not_found(
-            self,
-            client: AsyncClient,
-            headers: Dict,
-            response_tweet_not_found: Dict
+        self,
+        client: AsyncClient,
+        headers: Dict,
+        response_tweet_not_found: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при попытке удалить несуществующий твит
@@ -184,10 +187,10 @@ class TestTweets:
 
 
     async def test_delete_tweet_locked(
-            self,
-            client: AsyncClient,
-            headers: Dict,
-            response_tweet_locked: Dict
+        self,
+        client: AsyncClient,
+        headers: Dict,
+        response_tweet_locked: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при попытке удалить чужой твит

@@ -1,16 +1,20 @@
 from typing import Dict
 
+import loguru
 import pytest
 
 from httpx import AsyncClient
 from http import HTTPStatus
 
+
+@pytest.mark.user
+@pytest.mark.usefixtures("users")
 class TestUsers:
 
     @pytest.fixture(scope="class")
     async def response_data(
-            self,
-            good_response: Dict
+        self,
+        good_response: Dict
     ) -> Dict:
         """
         Ожидаемый ответ с данными по пользователю
@@ -18,8 +22,18 @@ class TestUsers:
         user_data = {
             "id": 1,
             "name": "test-user1",
-            "following": [],
-            "followers": [],
+            "following": [
+                {
+                    'id': 2,
+                    'name': 'test-user2'
+                }
+            ],
+            "followers": [
+                {
+                    'id': 2,
+                    'name': 'test-user2'
+                }
+            ],
         }
         good_response["user"] = user_data
 
@@ -27,8 +41,8 @@ class TestUsers:
 
     @pytest.fixture(scope="class")
     async def response_error(
-            self,
-            bad_response: Dict
+        self,
+        bad_response: Dict
     ) -> Dict:
         """
         Ожидаемый ответ в случае запроса не авторизованного пользователя
@@ -38,12 +52,11 @@ class TestUsers:
 
         return bad_response
 
-    @pytest.mark.usefixtures("users")
     async def test_user_me_data(
-            self,
-            client: AsyncClient,
-            response_data: Dict,
-            headers: Dict,
+        self,
+        client: AsyncClient,
+        response_data: Dict,
+        headers: Dict,
     ) -> None:
         """
         Тестирование ендпоинта по выводу данных о текущем пользователе
@@ -54,12 +67,11 @@ class TestUsers:
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == response_data
 
-    @pytest.mark.usefixtures("users")
     async def test_user_data_for_id(
-            self,
-            client: AsyncClient,
-            response_data: Dict,
-            headers: Dict
+        self,
+        client: AsyncClient,
+        response_data: Dict,
+        headers: Dict
     ) -> None:
         """
         Тестирование ендпоинта по выводу данных о пользователе по переданному id
@@ -70,12 +82,11 @@ class TestUsers:
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == response_data
 
-    @pytest.mark.usefixtures("users")
     async def test_user_data_for_id_not_found(
-            self,
-            client: AsyncClient,
-            response_error: Dict,
-            headers: Dict
+        self,
+        client: AsyncClient,
+        response_error: Dict,
+        headers: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при отсутствии пользователя по переданному id

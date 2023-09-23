@@ -43,7 +43,7 @@ async def get_me(current_user: Annotated[User, Depends(get_current_user)]):
 
 
 @router.post(
-    "{user_id}/follow",
+    "/{user_id}/follow",
     response_model=ResponseSchema,
     responses={
         401: {"model": UnauthorizedResponseSchema},
@@ -71,7 +71,7 @@ async def create_follower(
 
 
 @router.delete(
-    "{user_id}/follow",
+    "/{user_id}/follow",
     response_model=ResponseSchema,
     responses={
         401: {"model": UnauthorizedResponseSchema},

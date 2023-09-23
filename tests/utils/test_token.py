@@ -2,6 +2,7 @@ import pytest
 from httpx import AsyncClient
 from http import HTTPStatus
 
+@pytest.mark.token
 class TestToken:
 
     async def test_without_api_key(self, client: AsyncClient) -> None:
@@ -18,6 +19,7 @@ class TestToken:
 
         assert resp.status_code == HTTPStatus.UNAUTHORIZED  # Проверка кода ответа - 401
         assert resp.json() == await_response  # Проверка ответа
+
 
     # Используем фикстуру пользователем (создаем пользователя в тестовой БД)
     @pytest.mark.usefixtures("users")
