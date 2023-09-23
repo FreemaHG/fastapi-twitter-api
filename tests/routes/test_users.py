@@ -1,8 +1,6 @@
-from typing import Dict
-
-import loguru
 import pytest
 
+from typing import Dict
 from httpx import AsyncClient
 from http import HTTPStatus
 
@@ -39,6 +37,7 @@ class TestUsers:
 
         return good_response
 
+
     @pytest.fixture(scope="class")
     async def response_error(
         self,
@@ -51,6 +50,7 @@ class TestUsers:
         bad_response["error_message"] = "User not found"
 
         return bad_response
+
 
     async def test_user_me_data(
         self,
@@ -67,6 +67,7 @@ class TestUsers:
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == response_data
 
+
     async def test_user_data_for_id(
         self,
         client: AsyncClient,
@@ -81,6 +82,7 @@ class TestUsers:
         assert resp
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == response_data
+
 
     async def test_user_data_for_id_not_found(
         self,

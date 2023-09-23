@@ -31,6 +31,7 @@ class TestImages:
 
         return good_resp
 
+
     @pytest.fixture(scope="class")
     async def bad_media_response(self, bad_response: Dict):
         """
@@ -44,6 +45,7 @@ class TestImages:
 
         return bad_media_resp
 
+
     @pytest.fixture(scope="class")
     async def image(self):
         image_name = os.path.join(_TEST_ROOT_DIR, "files_for_tests", "test_image.jpg")
@@ -51,12 +53,14 @@ class TestImages:
 
         return image
 
+
     @pytest.fixture(scope="class")
     async def incorrect_file(self):
         file_name = os.path.join(_TEST_ROOT_DIR, "files_for_tests", "test_bad_file.txt")
         file = open(file_name, "rb")
 
         return file
+
 
     async def send_request(
         self,
@@ -74,12 +78,14 @@ class TestImages:
 
         return resp
 
+
     async def get_image(self):
         async with async_session_maker() as session:
             query = select(Image).where(Image.id == 1)
             tweet = await session.execute(query)
 
             return tweet.scalar_one_or_none()
+
 
     async def delete_image(self):
         """

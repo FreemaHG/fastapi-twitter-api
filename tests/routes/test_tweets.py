@@ -21,6 +21,7 @@ class TestTweets:
         headers["Content-Type"] = "application/json"
         return headers
 
+
     @pytest.fixture(scope="class")
     async def resp_for_new_tweet(
         self,
@@ -34,12 +35,14 @@ class TestTweets:
         good_resp["tweet_id"] = 4
         return good_resp
 
+
     @pytest.fixture(scope="class")
     async def new_tweet(self) -> Dict:
         """
         Данные для добавления нового твита
         """
         return {"tweet_data": "Тестовый твит", "tweet_media_ids": []}
+
 
     @pytest.fixture(scope="class")
     async def new_tweet_with_image(
@@ -52,6 +55,7 @@ class TestTweets:
         new_tweet["tweet_media_ids"] = [1, 2]
         return new_tweet
 
+
     @pytest.fixture(scope="class")
     async def response_tweet_locked(
         self,
@@ -59,6 +63,7 @@ class TestTweets:
     ) -> Dict:
         response_locked["error_message"] = "The tweet that is being accessed is locked"
         return response_locked
+
 
     async def send_request(
         self,
@@ -153,6 +158,7 @@ class TestTweets:
         assert resp
         assert resp.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
         assert resp.json() == bad_response
+
 
     async def test_delete_tweet(
         self,

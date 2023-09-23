@@ -2,7 +2,6 @@ from typing import Tuple, Dict
 
 import pytest
 from http import HTTPStatus
-
 from httpx import AsyncClient
 
 from tests.database import async_session_maker
@@ -63,6 +62,7 @@ class TestLikes:
         assert resp
         assert resp.status_code == HTTPStatus.NOT_FOUND
         assert resp.json() == response_tweet_not_found
+
 
     # Используем фикстуру для создания лайка (будет использоваться во всех следующих тестах к классе!)
     @pytest.mark.usefixtures("likes")

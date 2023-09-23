@@ -1,4 +1,3 @@
-import loguru
 import pytest
 
 from typing import Dict
@@ -22,6 +21,7 @@ class TestFollowers:
 
         return response_not_found
 
+
     @pytest.fixture(scope="class")
     async def response_existing_subscription(
         self,
@@ -34,6 +34,7 @@ class TestFollowers:
 
         return response_locked
 
+
     @pytest.fixture(scope="class")
     async def response_subscription_not_found(
         self,
@@ -45,6 +46,7 @@ class TestFollowers:
         response_not_found["error_message"] = "The user to cancel the subscription was not found"
 
         return response_not_found
+
 
     @pytest.fixture(scope="class")
     async def response_among_subscribers(
@@ -137,6 +139,7 @@ class TestFollowers:
         assert resp
         assert resp.status_code == HTTPStatus.NOT_FOUND
         assert resp.json() == response_subscription_not_found
+
 
     async def test_delete_follower_locked(
         self,
