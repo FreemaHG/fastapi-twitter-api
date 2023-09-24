@@ -1,13 +1,16 @@
 from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles
+from loguru import logger
 
-from src.config import STATIC_FOLDER
+from sqlalchemy.exc import ProgrammingError
+from src.database import engine
+from src.services.user import UserService
 from src.utils.user import get_current_user
+from src.utils.data_migrations import migration_data, re_creation_db
 from src.urls import register_routers
 from src.utils.exeptions import CustomApiException, custom_api_exception_handler
 
 
-# FIXME Используем глобальную зависимость - как не указывать в каждом ендпоинте (либо удалить от сюда)
 app = FastAPI(title="Twitter", debug=True, dependencies=[Depends(get_current_user)])
 
 # Задаем папку со статическим контентом
@@ -18,3 +21,32 @@ register_routers(app)
 
 # Регистрация кастомного исключения
 app.add_exception_handler(CustomApiException, custom_api_exception_handler)
+
+
+@app.on_event('startup')
+async def shutdows():
+    """
+    Создаем и заполняем БД данными, если их нет
+    """
+    try:
+        if not await UserService.check_users():
+            logger.warning("В БД нет данных")
+            await re_creation_db()  # Пересоздаем БД
+            await migration_data()  # Загружаем первичные данные в БД
+
+        else:
+            logger.info("Имеются данные, запуск приложения без загрузки демонстрационных данных")
+
+    except ProgrammingError:
+        logger.error("БД не обнаружена")
+
+        await re_creation_db()  # Пересоздаем БД
+        await migration_data()  # Загружаем первичные данные в БД
+
+
+@app.on_event('shutdown')
+async def shutdows():
+    """
+    Закрываем сессию и соединение с БД
+    """
+    await engine.dispose()

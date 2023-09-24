@@ -4,6 +4,7 @@ from sqlalchemy.orm import selectinload
 from loguru import logger
 
 from src.models.users import User
+from src.database import async_session_maker
 
 class UserService:
     """
@@ -40,7 +41,6 @@ class UserService:
         """
         logger.debug(f"Поиск пользователя по id: {user_id}")
 
-        # async with async_session_maker() as session:
         query = select(User)\
             .where(User.id == user_id)\
             .options(selectinload(User.following), selectinload(User.followers))
@@ -60,3 +60,19 @@ class UserService:
         :return: True - если переданный id == current_user.id | False - иначе
         """
         return current_user_id == user_id
+
+    @classmethod
+    async def check_users(cls) -> User | None:
+        """
+        Проверка наличия записей о пользователях в БД.
+        Используется перед предварительным наполнением БД демонстрационными данными.
+        :param session: объект асинхронной сессии
+        :return: объект пользователя / False
+        """
+        async with async_session_maker() as session:
+            logger.debug("Проверка данных о пользователях в БД")
+
+            query = select(User)
+            result = await session.execute(query)
+
+            return result.scalars().all()
