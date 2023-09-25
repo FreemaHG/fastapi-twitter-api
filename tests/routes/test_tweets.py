@@ -75,7 +75,7 @@ class TestTweets:
         Отправка запроса на добавление нового твита
         """
         resp = await client.post(
-            "/tweets",
+            "/api/tweets",
             data=json.dumps(new_tweet_data),
             headers=headers
         )
@@ -169,7 +169,7 @@ class TestTweets:
         """
         Тестирование удаление твита
         """
-        resp = await client.delete("/tweets/1", headers=headers)
+        resp = await client.delete("/api/tweets/1", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.OK
@@ -185,7 +185,7 @@ class TestTweets:
         """
         Тестирование вывода ошибки при попытке удалить несуществующий твит
         """
-        resp = await client.delete("/tweets/1000", headers=headers)
+        resp = await client.delete("/api/tweets/1000", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.NOT_FOUND
@@ -201,7 +201,7 @@ class TestTweets:
         """
         Тестирование вывода ошибки при попытке удалить чужой твит
         """
-        resp = await client.delete("/tweets/2", headers=headers)
+        resp = await client.delete("/api/tweets/2", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.LOCKED

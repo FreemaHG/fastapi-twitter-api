@@ -61,7 +61,7 @@ class TestUsers:
         """
         Тестирование ендпоинта по выводу данных о текущем пользователе
         """
-        resp = await client.get("/users/me", headers=headers)
+        resp = await client.get("/api/users/me", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.OK
@@ -77,7 +77,7 @@ class TestUsers:
         """
         Тестирование ендпоинта по выводу данных о пользователе по переданному id
         """
-        resp = await client.get("/users/1", headers=headers)
+        resp = await client.get("/api/users/1", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.OK
@@ -93,7 +93,7 @@ class TestUsers:
         """
         Тестирование вывода ошибки при отсутствии пользователя по переданному id
         """
-        resp = await client.get("/users/1000", headers=headers)
+        resp = await client.get("/api/users/1000", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.NOT_FOUND

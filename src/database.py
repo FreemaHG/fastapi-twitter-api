@@ -17,9 +17,7 @@ class Base(DeclarativeBase):
 metadata = MetaData()
 
 # Движок для асинхронного соединения с БД
-# echo=True - для вывода SQL-запросов в консоли
-engine = create_async_engine(DATABASE_URL, echo=True)
-# engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL)
 
 # Сессия для запросов к БД
 # FIXME Убрать class_=AsyncSession

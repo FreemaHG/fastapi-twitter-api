@@ -1,10 +1,42 @@
-version: "3.10"
-
-services:
-
-#  db-dev:
+#version: "3.10"
+#
+#services:
+#
+#  nginx:
+#      container_name: nginx
+#      build: nginx
+#      # FIXME Изменить местоположение загружаемых изображений
+#      volumes:
+#        - ./media:/usr/share/nginx/html/static/images
+#      ports:
+#        - 80:80
+#        - 443:443
+#      # Зависимость от контейнера с приложением (сборка только после того, как будет готово приложение)
+#      depends_on:
+#        - api
+#      logging:
+#        driver: "local"
+#
+#  api:
+#      container_name: api
+#      build: .
+#      # TODO Проверить
+#      env_file:
+##        - ./.env
+#        - .env
+#      # FIXME Сохранять изображения в другое место
+#      volumes:
+#        - ./media:/app/media
+#      ports:
+#        - 8000:8000
+#      depends_on:
+#        - db
+#      logging:
+#        driver: "local"
+#
+#  db:
 #    image: postgres:15
-#    container_name: db-postgres-dev
+#    container_name: postgres
 #    command: -p 5432
 #    expose:
 #      - 5432
@@ -15,34 +47,68 @@ services:
 #      - POSTGRES_PASSWORD=${DB_PASS:?err}
 #      - POSTGRES_DB=${DB_NAME:?err}
 #    volumes:
-#      - ./postgres_db_dev/:/var/lib/postgresql/data
+#      - ./postgres_db/:/var/lib/postgresql/data
+#
+#
+## TODO Проверить без этого
+#networks:
+#  local:
+#    driver: bridge
+#
+## TODO Проверить без этого
+##volumes:
+##  postgres_data:
 
-  db-test:
-    image: postgres:15
-    container_name: db-postgres-test
-    command: -p 2345
-    expose:
-      - 2345
-    ports:
-      - 2345:2345
-    environment:
-      - POSTGRES_USER=${DB_USER:?err}
-      - POSTGRES_PASSWORD=${DB_PASS:?err}
-      - POSTGRES_DB=${DB_NAME:?err}
-    volumes:
-      - ./postgres_db_test/:/var/lib/postgresql/data
 
-#  db-prod:
-#    image: postgres:15
-#    container_name: db-postgres-prod
-#    command: -p 1234
-#    expose:
-#      - 1234
-#    ports:
-#      - 1234:1234
-#    environment:
-#      - POSTGRES_USER=${DB_USER:?err}
-#      - POSTGRES_PASSWORD=${DB_PASS:?err}
-#      - POSTGRES_DB=${DB_NAME:?err}
-#    volumes:
-#      - ./postgres_db_prod/:/var/lib/postgresql/data
+
+version: "3.10"
+
+services:
+    web:
+        container_name: nginx
+        build: nginx
+        volumes:
+          - ./nginx/static/images:/usr/share/nginx/html/static/images
+        ports:
+          - 80:80
+          - 443:443
+        depends_on:
+          - api
+        logging:
+          driver: "local"
+
+    api:
+        container_name: api
+        build: .
+        env_file:
+          - ./.env
+#        volumes:
+#          - ./nginx/static/images:/nginx/static/images
+        ports:
+          - 8000:8000
+        depends_on:
+          - db
+        logging:
+          driver: "local"
+
+    db:
+      image: postgres:15
+      container_name: db
+      command: -p 5432
+      expose:
+        - 5432
+      ports:
+        - 5432:5432
+      environment:
+        - POSTGRES_USER=${DB_USER:?err}
+        - POSTGRES_PASSWORD=${DB_PASS:?err}
+        - POSTGRES_DB=${DB_NAME:?err}
+      volumes:
+        - ./postgres_db/:/var/lib/postgresql/data
+
+networks:
+  local:
+    driver: bridge
+
+volumes:
+  postgres_data:

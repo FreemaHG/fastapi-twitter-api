@@ -18,7 +18,7 @@ from src.schemas.base_response import (
 
 
 router = APIRouter(
-    prefix="/tweets",  # URL
+    prefix="/api/tweets",  # URL
     tags=["tweets"]  # Объединяем URL в группу
 )
 

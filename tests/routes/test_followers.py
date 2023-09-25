@@ -70,7 +70,7 @@ class TestFollowers:
         """
         Тестирование подписки на пользователя
         """
-        resp = await client.post("/users/3/follow", headers=headers)
+        resp = await client.post("/api/users/3/follow", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.CREATED
@@ -86,7 +86,7 @@ class TestFollowers:
         """
         Тестирование вывода ошибки при попытке подписки на несуществующего пользователя
         """
-        resp = await client.post("/users/1000/follow", headers=headers)
+        resp = await client.post("/api/users/1000/follow", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.NOT_FOUND
@@ -102,7 +102,7 @@ class TestFollowers:
         """
         Тестирование вывода ошибки при попытке подписки на уже подписанного ранее пользователя
         """
-        resp = await client.post("/users/2/follow", headers=headers)
+        resp = await client.post("/api/users/2/follow", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.LOCKED
@@ -118,7 +118,7 @@ class TestFollowers:
         """
         Тестирование удаления подписки пользователя
         """
-        resp = await client.delete("/users/3/follow", headers=headers)
+        resp = await client.delete("/api/users/3/follow", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.OK
@@ -134,7 +134,7 @@ class TestFollowers:
         """
         Тестирование вывода ошибки при удалении подписки с несуществующего пользователя
         """
-        resp = await client.delete("/users/1000/follow", headers=headers)
+        resp = await client.delete("/api/users/1000/follow", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.NOT_FOUND
@@ -150,7 +150,7 @@ class TestFollowers:
         """
         Тестирование вывода ошибки при удалении подписки от пользователя, на которого нет подписки
         """
-        resp = await client.delete("/users/3/follow", headers=headers)
+        resp = await client.delete("/api/users/3/follow", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.LOCKED

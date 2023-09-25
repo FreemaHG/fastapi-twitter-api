@@ -25,7 +25,6 @@ class ImageService:
         logger.debug("Сохранение изображения")
 
         path = await save_image(file=image)  # Сохранение изображения в файловой системе
-
         image_obj = Image(path_media=path)  # Создание экземпляра изображения
         session.add(image_obj)  # Добавление изображения в БД
         await session.commit()  # Сохранение в БД
@@ -81,4 +80,3 @@ class ImageService:
             await delete_images(images=images)
         else:
             logger.warning("Изображения не найдены")
-

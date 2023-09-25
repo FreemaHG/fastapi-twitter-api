@@ -10,15 +10,15 @@ from src.models.images import Image
 users = [
     {
         "username": "Дмитрий",
-        "api_key": "user1",
+        "api_key": "test",
     },
     {
         "username": "Елена",
-        "api_key": "user2",
+        "api_key": "test2",
     },
     {
         "username": "Анастасия",
-        "api_key": "user3",
+        "api_key": "test3",
     },
 ]
 

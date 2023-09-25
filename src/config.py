@@ -1,11 +1,13 @@
 import os
+
+from pathlib import Path
 from dotenv import load_dotenv
-from _pytest._py.path import LocalPath
 
 load_dotenv()  # Извлекаем переменные окружения из файла .env
 
-ROOT_PATH = LocalPath()
-STATIC_FOLDER = os.path.join(".", "src", "static")
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+STATIC_FOLDER = os.path.join(".", "nginx", "static")
 IMAGES_FOLDER = os.path.join(STATIC_FOLDER, "images")
 
 # Разрешенные форматы изображений для загрузки

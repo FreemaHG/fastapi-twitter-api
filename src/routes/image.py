@@ -15,7 +15,7 @@ from src.schemas.base_response import (
 
 
 router = APIRouter(
-    prefix="/medias",  # URL
+    prefix="/api/medias",  # URL
     tags=["medias"]  # Объединяем URL в группу
 )
 

@@ -41,7 +41,7 @@ class TestLikes:
         """
         Тестирование добавления лайка к твиту
         """
-        resp = await client.post("/tweets/2/likes", headers=headers)
+        resp = await client.post("/api/tweets/2/likes", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.CREATED
@@ -57,7 +57,7 @@ class TestLikes:
         """
         Тестирование вывода ошибки при попытке поставить лайк несуществующему твиту
         """
-        resp = await client.post("/tweets/1000/likes", headers=headers)
+        resp = await client.post("/api/tweets/1000/likes", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.NOT_FOUND
@@ -75,7 +75,7 @@ class TestLikes:
         """
         Тестирование вывода ошибки при добавлении лайка твиту, у которого уже есть лайк от пользователя
         """
-        resp = await client.post("/tweets/1/likes", headers=headers)
+        resp = await client.post("/api/tweets/1/likes", headers=headers)
         response_locked["error_message"] = "The user has already liked this tweet"
 
         assert resp
@@ -92,7 +92,7 @@ class TestLikes:
         """
         Тестирование удаления лайка
         """
-        resp = await client.delete("/tweets/1/likes", headers=headers)
+        resp = await client.delete("/api/tweets/1/likes", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.OK
@@ -108,7 +108,7 @@ class TestLikes:
         """
         Тестирование вывода ошибки при удалении лайка у несуществующей записи
         """
-        resp = await client.delete("/tweets/1000/likes", headers=headers)
+        resp = await client.delete("/api/tweets/1000/likes", headers=headers)
 
         assert resp
         assert resp.status_code == HTTPStatus.NOT_FOUND
@@ -124,7 +124,7 @@ class TestLikes:
         """
         Тестирование вывода ошибки при попытке удалить не существующий лайк
         """
-        resp = await client.delete("/tweets/3/likes", headers=headers)
+        resp = await client.delete("/api/tweets/3/likes", headers=headers)
         response_locked["error_message"] = "The user has not yet liked this tweet"
 
         assert resp

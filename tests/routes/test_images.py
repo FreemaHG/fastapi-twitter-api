@@ -1,6 +1,7 @@
 import os
 import pytest
 
+from _pytest._py.path import LocalPath
 from http import HTTPStatus
 from pathlib import Path
 from typing import Dict
@@ -10,7 +11,6 @@ from sqlalchemy import select
 
 from src.config import ALLOWED_EXTENSIONS
 from src.models.images import Image
-from src.config import ROOT_PATH
 from tests.database import async_session_maker
 
 
@@ -71,7 +71,7 @@ class TestImages:
         Функция для отправки запроса для загрузки файла к твиту
         """
         resp = await client.post(
-            "/medias",
+            "/api/medias",
             files={"file": file},
             headers={"api-key": "test-user1"}
         )
@@ -94,8 +94,9 @@ class TestImages:
         image = await self.get_image()
 
         if image:
-            _PATH = os.path.join(ROOT_PATH, "src", "static", image.path_media)
-            logger.info(f"Удаление директории: {_PATH}")
+            _LOCK_PATH = LocalPath()
+            _PATH = os.path.join(_LOCK_PATH, "nginx", "static", image.path_media)
+            logger.debug(f"Удаление файла: {_PATH}")
 
             if os.path.isfile(_PATH):
                 os.remove(_PATH)

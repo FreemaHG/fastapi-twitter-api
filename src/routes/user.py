@@ -20,7 +20,7 @@ from src.schemas.base_response import (
 
 
 router = APIRouter(
-    prefix="/users",  # URL
+    prefix="/api/users",  # URL
     tags=["users"]  # Объединяем URL в группу
 )
 

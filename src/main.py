@@ -13,8 +13,8 @@ from src.utils.exeptions import CustomApiException, custom_api_exception_handler
 
 app = FastAPI(title="Twitter", debug=True, dependencies=[Depends(get_current_user)])
 
-# Задаем папку со статическим контентом
-app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
+# Папка со статическим контентом
+# app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
 
 # Регистрация URL
 register_routers(app)
@@ -22,7 +22,8 @@ register_routers(app)
 # Регистрация кастомного исключения
 app.add_exception_handler(CustomApiException, custom_api_exception_handler)
 
-
+# FIXME Вынести миграции и добавлением демонстарционных данных в отдельную команду,
+#  чтобы при запуске приложения каждый воркер не дублировал действия по проверке данных в БД
 @app.on_event('startup')
 async def shutdows():
     """
