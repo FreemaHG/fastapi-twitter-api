@@ -1,70 +1,7 @@
-#version: "3.10"
-#
-#services:
-#
-#  nginx:
-#      container_name: nginx
-#      build: nginx
-#      # FIXME Изменить местоположение загружаемых изображений
-#      volumes:
-#        - ./media:/usr/share/nginx/html/static/images
-#      ports:
-#        - 80:80
-#        - 443:443
-#      # Зависимость от контейнера с приложением (сборка только после того, как будет готово приложение)
-#      depends_on:
-#        - api
-#      logging:
-#        driver: "local"
-#
-#  api:
-#      container_name: api
-#      build: .
-#      # TODO Проверить
-#      env_file:
-##        - ./.env
-#        - .env
-#      # FIXME Сохранять изображения в другое место
-#      volumes:
-#        - ./media:/app/media
-#      ports:
-#        - 8000:8000
-#      depends_on:
-#        - db
-#      logging:
-#        driver: "local"
-#
-#  db:
-#    image: postgres:15
-#    container_name: postgres
-#    command: -p 5432
-#    expose:
-#      - 5432
-#    ports:
-#      - 5432:5432
-#    environment:
-#      - POSTGRES_USER=${DB_USER:?err}
-#      - POSTGRES_PASSWORD=${DB_PASS:?err}
-#      - POSTGRES_DB=${DB_NAME:?err}
-#    volumes:
-#      - ./postgres_db/:/var/lib/postgresql/data
-#
-#
-## TODO Проверить без этого
-#networks:
-#  local:
-#    driver: bridge
-#
-## TODO Проверить без этого
-##volumes:
-##  postgres_data:
-
-
-
-version: "3.10"
+version: "3.11"
 
 services:
-    web:
+    nginx:
         container_name: nginx
         build: nginx
         volumes:
@@ -81,17 +18,15 @@ services:
         container_name: api
         build: .
         env_file:
-          - ./.env
-#        volumes:
-#          - ./nginx/static/images:/nginx/static/images
+          - .env
         ports:
           - 8000:8000
         depends_on:
-          - db
+          - postgres
         logging:
           driver: "local"
 
-    db:
+    postgres:
       image: postgres:15
       container_name: db
       command: -p 5432
@@ -105,10 +40,3 @@ services:
         - POSTGRES_DB=${DB_NAME:?err}
       volumes:
         - ./postgres_db/:/var/lib/postgresql/data
-
-networks:
-  local:
-    driver: bridge
-
-volumes:
-  postgres_data:

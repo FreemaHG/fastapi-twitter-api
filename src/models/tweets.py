@@ -16,7 +16,7 @@ class Tweet(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
     tweet_data: Mapped[str] = mapped_column(String(280))
-    created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow(), nullable=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow, nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     images: Mapped[List["Image"]] = relationship(backref="tweet", cascade="all, delete-orphan")
     likes: Mapped[List["Like"]] = relationship(backref="tweet", cascade="all, delete-orphan")
