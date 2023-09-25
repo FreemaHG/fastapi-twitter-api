@@ -20,8 +20,7 @@ from src.schemas.base_response import (
 
 
 router = APIRouter(
-    prefix="/api/users",  # URL
-    tags=["users"]  # Объединяем URL в группу
+    prefix="/api/users", tags=["users"]  # URL  # Объединяем URL в группу
 )
 
 
@@ -30,10 +29,8 @@ router = APIRouter(
     # Валидация выходных данных согласно схеме UserOutSchema
     response_model=UserOutSchema,
     # Примеры схем ответов для разных кодов ответов сервера
-    responses={
-        401: {"model": UnauthorizedResponseSchema}
-    },
-    status_code=200
+    responses={401: {"model": UnauthorizedResponseSchema}},
+    status_code=200,
 )
 async def get_me(current_user: Annotated[User, Depends(get_current_user)]):
     """
@@ -51,20 +48,18 @@ async def get_me(current_user: Annotated[User, Depends(get_current_user)]):
         422: {"model": ValidationResponseSchema},
         423: {"model": LockedResponseSchema},
     },
-    status_code=201
+    status_code=201,
 )
 async def create_follower(
     user_id: int,
     current_user: Annotated[User, Depends(get_current_user)],
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     """
     Подписка на пользователя
     """
     await FollowerService.create_follower(
-        current_user=current_user,
-        following_user_id=user_id,
-        session=session
+        current_user=current_user, following_user_id=user_id, session=session
     )
 
     return {"result": True}
@@ -79,20 +74,18 @@ async def create_follower(
         422: {"model": ValidationResponseSchema},
         423: {"model": LockedResponseSchema},
     },
-    status_code=200
+    status_code=200,
 )
 async def delete_follower(
     user_id: int,
     current_user: Annotated[User, Depends(get_current_user)],
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     """
     Отписка от пользователя
     """
     await FollowerService.delete_follower(
-        current_user=current_user,
-        followed_user_id=user_id,
-        session=session
+        current_user=current_user, followed_user_id=user_id, session=session
     )
 
     return {"result": True}
@@ -105,14 +98,11 @@ async def delete_follower(
         401: {"model": UnauthorizedResponseSchema},
         404: {"model": ErrorResponseSchema},
         422: {"model": ValidationResponseSchema},
-        423: {"model": LockedResponseSchema}
+        423: {"model": LockedResponseSchema},
     },
-    status_code=200
+    status_code=200,
 )
-async def get_user(
-    user_id: int,
-    session: AsyncSession = Depends(get_async_session)
-):
+async def get_user(user_id: int, session: AsyncSession = Depends(get_async_session)):
     """
     Вывод данных о пользователе: id, username, подписки, подписчики
     """
@@ -120,8 +110,7 @@ async def get_user(
 
     if user is None:
         raise CustomApiException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail="User not found"
+            status_code=HTTPStatus.NOT_FOUND, detail="User not found"
         )
 
     return {"user": user}

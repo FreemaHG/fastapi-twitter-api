@@ -132,4 +132,4 @@ dmypy.json
 .env-non-dev
 /.editorconfig
 
-/postgres_db*/
+/postgres_db/

@@ -14,18 +14,22 @@ user_to_user = Table(
     Column("following_id", Integer, ForeignKey("users.id"), primary_key=True),
 )
 
+
 class User(Base):
     """
     Модель для хранения данных о пользователях
     """
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
-    username: Mapped[str] = mapped_column(String(60), nullable=False, unique=True, index=True)
+    username: Mapped[str] = mapped_column(
+        String(60), nullable=False, unique=True, index=True
+    )
     api_key: Mapped[str] = mapped_column()
-    # FIXME Вернуть, проверить работоспособность с шаблоном!
-    # avatar: Mapped[str] = mapped_column(nullable=True)
-    tweets: Mapped[List["Tweet"]] = relationship(backref="user", cascade="all, delete-orphan")
+    tweets: Mapped[List["Tweet"]] = relationship(
+        backref="user", cascade="all, delete-orphan"
+    )
     likes: Mapped[List["Like"]] = relationship(
         backref="user",
         cascade="all, delete-orphan",
@@ -42,6 +46,4 @@ class User(Base):
     )
 
     # Отключаем проверку строк, тем самым убирая уведомление, возникающее при удалении несуществующей строки
-    __mapper_args__ = {
-        'confirm_deleted_rows': False
-    }
+    __mapper_args__ = {"confirm_deleted_rows": False}

@@ -12,11 +12,11 @@ IMAGES_FOLDER = os.path.join(STATIC_FOLDER, "images")
 
 # Разрешенные форматы изображений для загрузки
 ALLOWED_EXTENSIONS = {
-        "png",
-        "jpg",
-        "jpeg",
-        "gif",
-    }
+    "png",
+    "jpg",
+    "jpeg",
+    "gif",
+}
 
 # PostgresSQL
 DB_HOST = os.environ.get("DB_HOST")

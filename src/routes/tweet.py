@@ -13,27 +13,24 @@ from src.schemas.base_response import (
     UnauthorizedResponseSchema,
     ValidationResponseSchema,
     LockedResponseSchema,
-    ErrorResponseSchema
+    ErrorResponseSchema,
 )
 
 
 router = APIRouter(
-    prefix="/api/tweets",  # URL
-    tags=["tweets"]  # Объединяем URL в группу
+    prefix="/api/tweets", tags=["tweets"]  # URL  # Объединяем URL в группу
 )
 
 
 @router.get(
     "",
     response_model=TweetListSchema,
-    responses={
-        401: {"model": UnauthorizedResponseSchema}
-    },
-    status_code=200
+    responses={401: {"model": UnauthorizedResponseSchema}},
+    status_code=200,
 )
 async def get_tweets(
     current_user: Annotated[User, Depends(get_current_user)],
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     """
     Вывод ленты твитов (выводятся твиты людей, на которых подписан пользователь)
@@ -50,17 +47,19 @@ async def get_tweets(
         401: {"model": UnauthorizedResponseSchema},
         422: {"model": ValidationResponseSchema},
     },
-    status_code=201
+    status_code=201,
 )
 async def create_tweet(
     tweet: TweetInSchema,
     current_user: Annotated[User, Depends(get_current_user)],
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     """
     Добавление твита
     """
-    tweet = await TweetsService.create_tweet(tweet=tweet, current_user=current_user, session=session)
+    tweet = await TweetsService.create_tweet(
+        tweet=tweet, current_user=current_user, session=session
+    )
 
     return {"tweet_id": tweet.id}
 
@@ -84,7 +83,9 @@ async def delete_tweet(
     """
     Удаление твита
     """
-    await TweetsService.delete_tweet(user=current_user, tweet_id=tweet_id, session=session)
+    await TweetsService.delete_tweet(
+        user=current_user, tweet_id=tweet_id, session=session
+    )
 
     return {"result": True}
 
@@ -98,12 +99,12 @@ async def delete_tweet(
         422: {"model": ValidationResponseSchema},
         423: {"model": LockedResponseSchema},
     },
-    status_code=201
+    status_code=201,
 )
 async def create_like(
     tweet_id: int,
     current_user: Annotated[User, Depends(get_current_user)],
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
 ):
     """
     Лайк твита
@@ -132,6 +133,8 @@ async def delete_like(
     """
     Удаление лайка
     """
-    await LikeService.dislike(tweet_id=tweet_id, user_id=current_user.id, session=session)
+    await LikeService.dislike(
+        tweet_id=tweet_id, user_id=current_user.id, session=session
+    )
 
     return {"result": True}

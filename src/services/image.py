@@ -9,6 +9,7 @@ from loguru import logger
 from src.models.images import Image
 from src.utils.image import save_image, delete_images
 
+
 class ImageService:
     """
     Сервис для сохранения изображений при добавлении нового твита
@@ -31,9 +32,10 @@ class ImageService:
 
         return image_obj.id
 
-
     @classmethod
-    async def update_images(cls, tweet_media_ids: List[int], tweet_id: int, session: AsyncSession) -> None:
+    async def update_images(
+        cls, tweet_media_ids: List[int], tweet_id: int, session: AsyncSession
+    ) -> None:
         """
         Обновление изображений (привязка к твиту)
         :param tweet_media_ids: список с id изображений
@@ -41,11 +43,14 @@ class ImageService:
         :param session: объект асинхронной сессии
         :return: None
         """
-        logger.debug(f"Обновление изображений по id: {tweet_media_ids}, tweet_id: {tweet_id}")
+        logger.debug(
+            f"Обновление изображений по id: {tweet_media_ids}, tweet_id: {tweet_id}"
+        )
 
-        query = update(Image).where(Image.id.in_(tweet_media_ids)).values(tweet_id=tweet_id)
+        query = (
+            update(Image).where(Image.id.in_(tweet_media_ids)).values(tweet_id=tweet_id)
+        )
         await session.execute(query)
-
 
     @classmethod
     async def get_images(cls, tweet_id: int, session: AsyncSession) -> List[Image]:

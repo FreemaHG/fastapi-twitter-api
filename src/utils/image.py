@@ -31,8 +31,9 @@ def allowed_image(image_name: str) -> None:
         raise CustomApiException(
             status_code=HTTPStatus.UNPROCESSABLE_ENTITY,  # 422
             detail=f"The image has an unresolved format. You can only download the following formats: "
-                   f"{', '.join(ALLOWED_EXTENSIONS)}"
+            f"{', '.join(ALLOWED_EXTENSIONS)}",
         )
+
 
 def clear_path(path: str) -> str:
     """
@@ -42,7 +43,7 @@ def clear_path(path: str) -> str:
     """
     return path.split("static")[1][1:]
 
-# FIXME Сделать сохранение в папку nginx/static
+
 async def create_directory(path: str) -> None:
     """
     Создаем папку для сохранения изображений
@@ -50,20 +51,6 @@ async def create_directory(path: str) -> None:
     logger.debug(f"Создание директории: {path}")
     os.makedirs(path)  # Создание нескольких вложенных папок
 
-# FIXME Сделать добавление числового индекса в название файла при дублировании
-# async def update_filename(filename: str) -> str:
-#     """
-#     Добавляем числовой индекс в название файла
-#     :param filename: название файла
-#     :return: обновленное название файла
-#     """
-#     count = 1
-#     logger.debug(f"Старое название: {filename}")
-#     new_filename = filename.replace(".", f"_{count}.")
-#     logger.debug(f"Новое название: {new_filename}")
-#     count+=1
-#
-#     return new_filename
 
 async def save_image(file: UploadFile, avatar=False) -> str:
     """
@@ -99,18 +86,13 @@ async def save_image(file: UploadFile, avatar=False) -> str:
         contents = file.file.read()
         full_path = os.path.join(path, f"{file.filename}")
 
-        # FIXME Сделать добавление числового индекса в название файла при дублировании
-        # Если файл с таким названием уже есть, то добавляем числовой индекс в название файла для сохранения
-        # if os.path.isfile(full_path):
-        #     new_file_name = await update_filename(filename=file.filename)
-        #     full_path = os.path.join(path, f"{new_file_name}")
-
         # Сохраняем изображение
         async with aiofiles.open(full_path, mode="wb") as f:
             await f.write(contents)
 
         # Возвращаем очищенную строку для записи в БД
         return clear_path(path=full_path)
+
 
 async def delete_images(images: List[Image]) -> None:
     """
@@ -138,6 +120,7 @@ async def delete_images(images: List[Image]) -> None:
 
     # Проверка и очистка директории, если пустая
     await check_and_delete_folder(path=folder)
+
 
 async def check_and_delete_folder(path: str) -> None:
     """

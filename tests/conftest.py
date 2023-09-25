@@ -20,7 +20,7 @@ async def init_models():
         await conn.run_sync(Base.metadata.create_all)
 
 
-# # 2 вариант создания таблиц
+# # 2 вариант создания таблиц (с использованием миграций Alembic)
 # # Конфиги алембика для инициализации БД
 # alembic_cfg = Config("alembic.ini")
 
@@ -54,7 +54,7 @@ async def init_models():
 
 
 # Пример рекомендуемого кода из документации по асинхронному тестированию FastApi
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def event_loop(request):
     """
     Create an instance of the default event loop for each test case.

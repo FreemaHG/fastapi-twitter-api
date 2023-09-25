@@ -10,13 +10,12 @@ from src.schemas.image import ImageResponseSchema
 from src.schemas.base_response import (
     UnauthorizedResponseSchema,
     BadResponseSchema,
-    ValidationResponseSchema
+    ValidationResponseSchema,
 )
 
 
 router = APIRouter(
-    prefix="/api/medias",  # URL
-    tags=["medias"]  # Объединяем URL в группу
+    prefix="/api/medias", tags=["medias"]  # URL  # Объединяем URL в группу
 )
 
 
@@ -28,7 +27,7 @@ router = APIRouter(
         400: {"model": BadResponseSchema},
         422: {"model": ValidationResponseSchema},
     },
-    status_code=201
+    status_code=201,
 )
 async def add_image(
     file: UploadFile,
@@ -42,7 +41,7 @@ async def add_image(
 
         raise CustomApiException(
             status_code=HTTPStatus.BAD_REQUEST,  # 400
-            detail="The image was not attached to the request"
+            detail="The image was not attached to the request",
         )
 
     # Записываем изображение в файловой системе и создаем запись в БД

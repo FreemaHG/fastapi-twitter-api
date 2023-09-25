@@ -8,12 +8,8 @@ from httpx import AsyncClient
 @pytest.mark.follower
 @pytest.mark.usefixtures("users")
 class TestFollowers:
-
     @pytest.fixture(scope="class")
-    async def response_not_user(
-        self,
-        response_not_found: Dict
-    ):
+    async def response_not_user(self, response_not_found: Dict):
         """
         Ожидаемый ответ в случае запроса подписки на несуществующего пользователя
         """
@@ -21,12 +17,8 @@ class TestFollowers:
 
         return response_not_found
 
-
     @pytest.fixture(scope="class")
-    async def response_existing_subscription(
-        self,
-        response_locked: Dict
-    ):
+    async def response_existing_subscription(self, response_locked: Dict):
         """
         Ожидаемый ответ в случае запроса подписки на уже подписанного пользователя
         """
@@ -34,25 +26,19 @@ class TestFollowers:
 
         return response_locked
 
-
     @pytest.fixture(scope="class")
-    async def response_subscription_not_found(
-        self,
-        response_not_found: Dict
-    ):
+    async def response_subscription_not_found(self, response_not_found: Dict):
         """
         Ожидаемый ответ в случае отмены подписки от несуществующего пользователя
         """
-        response_not_found["error_message"] = "The user to cancel the subscription was not found"
+        response_not_found[
+            "error_message"
+        ] = "The user to cancel the subscription was not found"
 
         return response_not_found
 
-
     @pytest.fixture(scope="class")
-    async def response_among_subscribers(
-        self,
-        response_locked: Dict
-    ):
+    async def response_among_subscribers(self, response_locked: Dict):
         """
         Ожидаемый ответ в случае отмены подписки от пользователя, на которого нет подписки
         """
@@ -60,12 +46,8 @@ class TestFollowers:
 
         return response_locked
 
-
     async def test_create_follower(
-        self,
-        client: AsyncClient,
-        headers: Dict,
-        good_response: Dict
+        self, client: AsyncClient, headers: Dict, good_response: Dict
     ) -> None:
         """
         Тестирование подписки на пользователя
@@ -76,12 +58,8 @@ class TestFollowers:
         assert resp.status_code == HTTPStatus.CREATED
         assert resp.json() == good_response
 
-
     async def test_create_follower_not_found(
-            self,
-            client: AsyncClient,
-            headers: Dict,
-            response_not_user: Dict
+        self, client: AsyncClient, headers: Dict, response_not_user: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при попытке подписки на несуществующего пользователя
@@ -92,12 +70,8 @@ class TestFollowers:
         assert resp.status_code == HTTPStatus.NOT_FOUND
         assert resp.json() == response_not_user
 
-
     async def test_create_follower_locked(
-        self,
-        client: AsyncClient,
-        headers: Dict,
-        response_existing_subscription: Dict
+        self, client: AsyncClient, headers: Dict, response_existing_subscription: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при попытке подписки на уже подписанного ранее пользователя
@@ -108,12 +82,8 @@ class TestFollowers:
         assert resp.status_code == HTTPStatus.LOCKED
         assert resp.json() == response_existing_subscription
 
-
     async def test_delete_follower(
-        self,
-        client: AsyncClient,
-        headers: Dict,
-        good_response: Dict
+        self, client: AsyncClient, headers: Dict, good_response: Dict
     ) -> None:
         """
         Тестирование удаления подписки пользователя
@@ -124,12 +94,8 @@ class TestFollowers:
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == good_response
 
-
     async def test_delete_follower_not_found(
-        self,
-        client: AsyncClient,
-        headers: Dict,
-        response_subscription_not_found: Dict
+        self, client: AsyncClient, headers: Dict, response_subscription_not_found: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при удалении подписки с несуществующего пользователя
@@ -140,12 +106,8 @@ class TestFollowers:
         assert resp.status_code == HTTPStatus.NOT_FOUND
         assert resp.json() == response_subscription_not_found
 
-
     async def test_delete_follower_locked(
-        self,
-        client: AsyncClient,
-        headers: Dict,
-        response_among_subscribers: Dict
+        self, client: AsyncClient, headers: Dict, response_among_subscribers: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при удалении подписки от пользователя, на которого нет подписки

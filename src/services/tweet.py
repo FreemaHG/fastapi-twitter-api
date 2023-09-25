@@ -11,6 +11,7 @@ from src.services.image import ImageService
 from src.utils.exeptions import CustomApiException
 from src.schemas.tweet import TweetInSchema
 
+
 class TweetsService:
     """
     Сервис для добавления, удаления и вывода твитов
@@ -28,16 +29,18 @@ class TweetsService:
 
         # FIXME По ТЗ возврат с сортировкой по популярности
         #  (сделать в модели подсчет лайков + сортировка по дате и лайкам)
-        query = select(Tweet)\
-            .filter(Tweet.user_id.in_(user.id for user in user.following))\
+        query = (
+            select(Tweet)
+            .filter(Tweet.user_id.in_(user.id for user in user.following))
             .options(
                 joinedload(Tweet.user),
                 joinedload(Tweet.likes).subqueryload(Like.user),
                 joinedload(Tweet.images),
-            )\
+            )
             .order_by(Tweet.created_at.desc())
-            # joinedload - запрашиваем данные из связанных таблиц
-            # subqueryload - запрашиваем связанные вложенные данные по автору лайка без доп.запроса к БД
+        )
+        # joinedload - запрашиваем данные из связанных таблиц
+        # subqueryload - запрашиваем связанные вложенные данные по автору лайка без доп.запроса к БД
 
         result = await session.execute(query)
         tweets = result.unique().scalars().all()
@@ -60,7 +63,9 @@ class TweetsService:
         return tweet.scalar_one_or_none()
 
     @classmethod
-    async def create_tweet(cls, tweet: TweetInSchema, current_user: User, session: AsyncSession) -> Tweet:
+    async def create_tweet(
+        cls, tweet: TweetInSchema, current_user: User, session: AsyncSession
+    ) -> Tweet:
         """
         Создание нового твита
         :param tweet: данные для нового твита
@@ -81,16 +86,19 @@ class TweetsService:
 
         if tweet_media_ids and tweet_media_ids != []:
             # Привязываем изображения к твиту
-            await ImageService.update_images(tweet_media_ids=tweet_media_ids, tweet_id=new_tweet.id, session=session)
+            await ImageService.update_images(
+                tweet_media_ids=tweet_media_ids, tweet_id=new_tweet.id, session=session
+            )
 
         # Сохраняем в БД все изменения (новый твит + привязку картинок к твиту)
         await session.commit()
 
         return new_tweet
 
-
     @classmethod
-    async def delete_tweet(cls, user: User, tweet_id: int, session: AsyncSession) -> None:
+    async def delete_tweet(
+        cls, user: User, tweet_id: int, session: AsyncSession
+    ) -> None:
         """
         Удаление твита
         :param user: объект текущего пользователя
@@ -107,8 +115,7 @@ class TweetsService:
             logger.error("Твит не найден")
 
             raise CustomApiException(
-                status_code=HTTPStatus.NOT_FOUND,  # 404
-                detail="Tweet not found"
+                status_code=HTTPStatus.NOT_FOUND, detail="Tweet not found"  # 404
             )
 
         else:
@@ -117,7 +124,7 @@ class TweetsService:
 
                 raise CustomApiException(
                     status_code=HTTPStatus.LOCKED,  # 423
-                    detail="The tweet that is being accessed is locked"
+                    detail="The tweet that is being accessed is locked",
                 )
 
             else:

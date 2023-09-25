@@ -19,7 +19,7 @@ async def get_current_user(token: str = Security(TOKEN)) -> User | None:
 
         raise CustomApiException(
             status_code=HTTPStatus.UNAUTHORIZED,  # 401
-            detail="Valid api-token token is missing"
+            detail="Valid api-token token is missing",
         )
 
     async with async_session_maker() as session:
@@ -29,7 +29,7 @@ async def get_current_user(token: str = Security(TOKEN)) -> User | None:
         if current_user is None:
             raise CustomApiException(
                 status_code=HTTPStatus.UNAUTHORIZED,  # 401
-                detail="Sorry. Wrong api-key token. This user does not exist"
+                detail="Sorry. Wrong api-key token. This user does not exist",
             )
 
         return current_user

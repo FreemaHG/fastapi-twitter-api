@@ -6,6 +6,7 @@ from loguru import logger
 from src.models.users import User
 from src.database import async_session_maker
 
+
 class UserService:
     """
     Сервис для вывода данных о пользователе
@@ -21,11 +22,13 @@ class UserService:
         """
         logger.debug(f"Поиск пользователя по api-key: {token}")
 
-        query = select(User)\
-            .where(User.api_key == token)\
+        query = (
+            select(User)
+            .where(User.api_key == token)
             .options(selectinload(User.following), selectinload(User.followers))
-            # ВАЖНО: selectinload - подгружаем подписчиков
-            # в противном случае по ним нет данных - не проходит валидация схемы!
+        )
+        # ВАЖНО: selectinload - подгружаем подписчиков
+        # в противном случае по ним нет данных - не проходит валидация схемы!
 
         result = await session.execute(query)
 
@@ -41,10 +44,12 @@ class UserService:
         """
         logger.debug(f"Поиск пользователя по id: {user_id}")
 
-        query = select(User)\
-            .where(User.id == user_id)\
+        query = (
+            select(User)
+            .where(User.id == user_id)
             .options(selectinload(User.following), selectinload(User.followers))
-            # selectinload - подгружаем подписчиков (без загрузки нет данных - не проходит валидация схемы)
+        )
+        # selectinload - подгружаем подписчиков (без загрузки нет данных - не проходит валидация схемы)
 
         result = await session.execute(query)
 

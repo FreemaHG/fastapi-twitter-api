@@ -7,6 +7,7 @@ from src.models.likes import Like
 from src.services.tweet import TweetsService
 from src.utils.exeptions import CustomApiException
 
+
 class LikeService:
     """
     Сервис для проставления лайков и дизлайков твитам
@@ -30,16 +31,17 @@ class LikeService:
             logger.error("Твит не найден")
 
             raise CustomApiException(
-                status_code=HTTPStatus.NOT_FOUND,  # 404
-                detail="Tweet not found"
+                status_code=HTTPStatus.NOT_FOUND, detail="Tweet not found"  # 404
             )
 
-        if await cls.check_like_tweet(tweet_id=tweet_id, user_id=user_id, session=session):
+        if await cls.check_like_tweet(
+            tweet_id=tweet_id, user_id=user_id, session=session
+        ):
             logger.warning("Пользователь уже ставил лайк твиту")
 
             raise CustomApiException(
                 status_code=HTTPStatus.LOCKED,  # 423
-                detail="The user has already liked this tweet"
+                detail="The user has already liked this tweet",
             )
 
         # TODO При реализации подсчета лайков
@@ -51,7 +53,9 @@ class LikeService:
         await session.commit()
 
     @classmethod
-    async def check_like_tweet(cls, tweet_id: int, user_id: int, session: AsyncSession) -> Like | None:
+    async def check_like_tweet(
+        cls, tweet_id: int, user_id: int, session: AsyncSession
+    ) -> Like | None:
         """
         Проверка лайка (метод возвращает запись о лайке, проверяя тем самым, ставил ли пользователь лайк
         указанному твиту)
@@ -84,29 +88,25 @@ class LikeService:
             logger.error("Твит не найден")
 
             raise CustomApiException(
-                status_code=HTTPStatus.NOT_FOUND,  # 404
-                detail="Tweet not found"
+                status_code=HTTPStatus.NOT_FOUND, detail="Tweet not found"  # 404
             )
 
         # Ищем запись о лайке
-        like_record = await cls.check_like_tweet(tweet_id=tweet_id, user_id=user_id, session=session)
-
-        logger.info(f"Найденный лайк: {like_record}")
-        # logger.info(f"id: {like_record.id}")
-        # logger.info(f"твит: {like_record.tweets_id}")
-        # logger.info(f"автор: {like_record.user_id}")
+        like_record = await cls.check_like_tweet(
+            tweet_id=tweet_id, user_id=user_id, session=session
+        )
 
         if like_record is None:
             logger.warning("Запись о лайке не найдена")
 
             raise CustomApiException(
                 status_code=HTTPStatus.LOCKED,  # 423
-                detail="The user has not yet liked this tweet"
+                detail="The user has not yet liked this tweet",
             )
 
         await session.delete(like_record)  # Удаляем лайк
 
-        # TODO Подсчет лайков
+        # TODO Подсчет лайков (возможно добавлю в будущем)
         # tweet.num_likes -= 1  # Уменьшаем счетчик лайков твита
         #
         # # Проверка, чтобы лайки не уходили в минус

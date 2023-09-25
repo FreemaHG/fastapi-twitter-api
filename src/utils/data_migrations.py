@@ -219,5 +219,5 @@ async def migration_data():
         logger.debug("Данные успешно добавлены")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(migration_data())

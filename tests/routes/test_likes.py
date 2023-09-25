@@ -14,13 +14,8 @@ from src.models.tweets import Like
 # Используем в тестах данные о пользователе и твитах
 @pytest.mark.usefixtures("users", "tweets")
 class TestLikes:
-
     @pytest.fixture(scope="class")
-    async def likes(
-        self,
-        users: Tuple[User],
-        tweets: Tuple[Tweet]
-    ) -> Like:
+    async def likes(self, users: Tuple[User], tweets: Tuple[Tweet]) -> Like:
         """
         Добавляем записи о лайках
         """
@@ -30,7 +25,6 @@ class TestLikes:
             await session.commit()
 
             return like_1
-
 
     async def test_create_like(
         self,
@@ -47,7 +41,6 @@ class TestLikes:
         assert resp.status_code == HTTPStatus.CREATED
         assert resp.json() == good_response
 
-
     async def test_create_like_not_found(
         self,
         client: AsyncClient,
@@ -63,14 +56,10 @@ class TestLikes:
         assert resp.status_code == HTTPStatus.NOT_FOUND
         assert resp.json() == response_tweet_not_found
 
-
     # Используем фикстуру для создания лайка (будет использоваться во всех следующих тестах к классе!)
     @pytest.mark.usefixtures("likes")
     async def test_create_like_locked(
-        self,
-        client: AsyncClient,
-        headers: Dict,
-        response_locked: Dict
+        self, client: AsyncClient, headers: Dict, response_locked: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при добавлении лайка твиту, у которого уже есть лайк от пользователя
@@ -82,12 +71,8 @@ class TestLikes:
         assert resp.status_code == HTTPStatus.LOCKED
         assert resp.json() == response_locked
 
-
     async def test_delete_like(
-        self,
-        client: AsyncClient,
-        headers: Dict,
-        good_response: Dict
+        self, client: AsyncClient, headers: Dict, good_response: Dict
     ) -> None:
         """
         Тестирование удаления лайка
@@ -98,12 +83,8 @@ class TestLikes:
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == good_response
 
-
     async def test_delete_like_not_found(
-        self,
-        client: AsyncClient,
-        headers: Dict,
-        response_tweet_not_found: Dict
+        self, client: AsyncClient, headers: Dict, response_tweet_not_found: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при удалении лайка у несуществующей записи
@@ -114,12 +95,8 @@ class TestLikes:
         assert resp.status_code == HTTPStatus.NOT_FOUND
         assert resp.json() == response_tweet_not_found
 
-
     async def test_delete_like_locked(
-        self,
-        client: AsyncClient,
-        headers: Dict,
-        response_locked: Dict
+        self, client: AsyncClient, headers: Dict, response_locked: Dict
     ) -> None:
         """
         Тестирование вывода ошибки при попытке удалить не существующий лайк

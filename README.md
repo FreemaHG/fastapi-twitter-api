@@ -44,6 +44,7 @@
     ```
     <your_domain>/docs/
     ```
+
 ![](/screens/docs_1.png)
 ![](/screens/docs_2.png)
 ![](/screens/docs_3.png)
