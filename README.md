@@ -72,7 +72,11 @@
     ```
     pip install -r requirements/developments.txt
     ```
-3. Запускаем тесты:
+3. Запускаем в фоне контейнер с БД:
+    ```
+    docker-compose up postgres -d
+    ```
+4. Запускаем тесты:
     ```
     pytest -v
     ```
