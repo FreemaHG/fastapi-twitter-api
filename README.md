@@ -8,7 +8,7 @@
 
 ## Используемые инструменты
 * **Python** (3.11);
-* **FastApi** (asynchronous Wev Framework);
+* **FastApi** (asynchronous Web Framework);
 * **Docker** and **Docker Compose** (containerization);
 * **PostgreSQL** (database);
 * **SQLAlchemy** (working with database from Python);
